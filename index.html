@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Young Connection – Arrecadação</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2339ff14'/%3E%3Cstop offset='50%25' stop-color='%2300cfff'/%3E%3Cstop offset='100%25' stop-color='%239b30ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='%230a0a0a'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Arial,sans-serif' font-size='27' font-weight='900' fill='url(%23g)'%3EYC%3C/text%3E%3C/svg%3E"/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #0a0a0a;
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── BACKGROUND BLOBS ── */
+    .bg-blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob-green  { width: 420px; height: 420px; background: #39ff14; top: -120px; left: -120px; }
+    .blob-purple { width: 500px; height: 500px; background: #9b30ff; top: -100px; right: -150px; }
+    .blob-blue   { width: 380px; height: 380px; background: #00cfff; bottom: -100px; right: 80px; }
+    .blob-pink   { width: 300px; height: 300px; background: #ff2d78; bottom: -80px; left: 60px; }
+
+    /* ── HEADER ── */
+    header {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 36px 20px 28px;
+      border-bottom: 2px solid rgba(255,255,255,0.07);
+      background: linear-gradient(180deg, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.7) 100%);
+      backdrop-filter: blur(6px);
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(90deg, #39ff14, #00cfff);
+      color: #0a0a0a;
+      font-size: 0.65rem;
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 5px 16px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+
+    .site-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      line-height: 0.92;
+      letter-spacing: 4px;
+      position: relative;
+      display: inline-block;
+    }
+    .site-title .young {
+      display: block;
+      color: #ffffff;
+      text-shadow:
+        0 0 20px rgba(57,255,20,0.6),
+        3px 3px 0 rgba(57,255,20,0.3);
+      -webkit-text-stroke: 1px rgba(255,255,255,0.4);
+    }
+    .site-title .connection {
+      display: block;
+      background: linear-gradient(90deg, #39ff14 0%, #00cfff 50%, #9b30ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      filter: drop-shadow(0 0 18px rgba(0,207,255,0.55));
+    }
+
+    .header-tagline {
+      margin-top: 12px;
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+    }
+    .header-tagline span { color: #39ff14; }
+
+    /* ── MAIN GRID ── */
+    .container {
+      position: relative;
+      z-index: 5;
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 48px 24px 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+    @media (max-width: 768px) {
+      .container { grid-template-columns: 1fr; }
+    }
+
+    /* ── CARD BASE ── */
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 20px;
+      padding: 36px 32px;
+      backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(57,255,20,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* ── LEFT – EVENT INFO ── */
+    .section-label {
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #39ff14;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, #39ff14, transparent);
+    }
+
+    .event-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      background: linear-gradient(90deg, #fff 40%, #00cfff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .event-subtitle {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .info-item {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 14px 16px;
+      text-decoration: none;
+    }
+    .info-item .whatsapp-icon {
+      width: 16px;
+      height: 16px;
+      vertical-align: -3px;
+      fill: #39ff14;
+    }
+    .info-item .label {
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 4px;
+    }
+    .info-item .value {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .info-item .value.highlight { color: #39ff14; }
+
+    .event-description {
+      font-size: 0.88rem;
+      line-height: 1.75;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 24px;
+    }
+    .event-description strong { color: #00cfff; }
+
+    /* PROGRESS BAR */
+    .progress-section { margin-bottom: 8px; }
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .progress-header .prog-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+    .progress-header .prog-percent {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      color: #39ff14;
+      letter-spacing: 1px;
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 62%;
+      background: linear-gradient(90deg, #39ff14, #00cfff, #9b30ff);
+      border-radius: 999px;
+      position: relative;
+      animation: growBar 1.8s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    @keyframes growBar {
+      from { width: 0; }
+      to   { width: 62%; }
+    }
+    .progress-bar-fill::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 20px; height: 100%;
+      background: rgba(255,255,255,0.35);
+      border-radius: 999px;
+      filter: blur(4px);
+    }
+    .progress-amounts {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.35);
+    }
+    .progress-amounts .raised { color: #39ff14; font-weight: 700; }
+
+    /* ── RIGHT – DONATION ── */
+    .right-card::before {
+      background: linear-gradient(135deg, rgba(155,48,255,0.08) 0%, transparent 60%);
+    }
+
+    .donation-label {
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #9b30ff;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .donation-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, #9b30ff, transparent);
+    }
+
+    .donation-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    .donation-desc {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    /* VALUE SELECTOR */
+    .value-selector { margin-bottom: 28px; }
+    .value-selector .vs-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 12px;
+    }
+    .value-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .chip {
+      background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+      color: rgba(255,255,255,0.7);
+    }
+    .chip:hover, .chip.active {
+      background: linear-gradient(135deg, rgba(57,255,20,0.18), rgba(0,207,255,0.18));
+      border-color: #39ff14;
+      color: #fff;
+      box-shadow: 0 0 14px rgba(57,255,20,0.25);
+    }
+
+    .custom-amount-wrap {
+      position: relative;
+    }
+    .currency-sign {
+      position: absolute;
+      left: 14px; top: 50%;
+      transform: translateY(-50%);
+      font-weight: 900;
+      color: #39ff14;
+      font-size: 1rem;
+    }
+    .custom-amount {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 13px 16px 13px 34px;
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .custom-amount:focus { border-color: #00cfff; box-shadow: 0 0 12px rgba(0,207,255,0.2); }
+    .custom-amount::placeholder { color: rgba(255,255,255,0.25); font-weight: 400; }
+
+    /* PIX BOX */
+    .pix-box {
+      background: rgba(0,0,0,0.35);
+      border: 1.5px solid rgba(57,255,20,0.25);
+      border-radius: 16px;
+      padding: 22px 20px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .pix-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .pix-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pix-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #39ff14, #00cfff);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+    .pix-title-text {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #39ff14;
+    }
+    .pix-subtitle {
+      font-size: 0.62rem;
+      color: rgba(255,255,255,0.4);
+      margin-top: 2px;
+    }
+
+    .pix-key-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+    .pix-key-value {
+      flex: 1;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+      word-break: break-all;
+    }
+    .copy-btn {
+      background: linear-gradient(135deg, #39ff14, #00cfff);
+      color: #0a0a0a;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all .2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .copy-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 16px rgba(57,255,20,0.5);
+    }
+    .copy-btn.copied {
+      background: linear-gradient(135deg, #fff, #c8ffa0);
+    }
+
+    .pix-name-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.45);
+    }
+    .pix-name-row span { color: rgba(255,255,255,0.7); font-weight: 600; }
+
+    /* WHATSAPP BUTTON */
+    .whatsapp-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      border: none;
+      border-radius: 14px;
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all .25s;
+      text-transform: uppercase;
+      box-shadow: 0 6px 28px rgba(37,211,102,0.25);
+    }
+    .whatsapp-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 36px rgba(37,211,102,0.45);
+    }
+    .whatsapp-btn svg { flex-shrink: 0; }
+    .whatsapp-btn-sub {
+      font-size: 0.62rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 0.5px;
+      text-transform: none;
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: linear-gradient(135deg, #39ff14, #00cfff);
+      color: #0a0a0a;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      border-radius: 999px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all .35s cubic-bezier(.4,0,.2,1);
+      z-index: 9999;
+      box-shadow: 0 6px 30px rgba(57,255,20,0.45);
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* FOOTER */
+    footer {
+      position: relative;
+      z-index: 5;
+      text-align: center;
+      padding: 24px 20px 32px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    footer p {
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    footer strong { color: rgba(57,255,20,0.6); }
+
+    /* DECORATIVE ELEMENTS */
+    .deco {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.18;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 8rem;
+      letter-spacing: -4px;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.5);
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background blobs -->
+  <div class="bg-blob blob-green"></div>
+  <div class="bg-blob blob-purple"></div>
+  <div class="bg-blob blob-blue"></div>
+  <div class="bg-blob blob-pink"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="header-badge">
+      🌍 &nbsp;Seja parte de algo maior
+    </div>
+    <h1 class="site-title">
+      <span class="young">Young</span>
+      <span class="connection">Connection</span>
+    </h1>
+    <p class="header-tagline">
+      <span>Conecte</span> &nbsp;•&nbsp; <span>Compartilhe</span> &nbsp;•&nbsp; <span>Transforme</span>
+    </p>
+  </header>
+
+  <!-- Main content -->
+  <div class="container">
+
+    <!-- ── LEFT: Event Info ── -->
+    <div class="card left-card">
+      <div class="section-label">🎯 Sobre o Evento</div>
+
+      <h2 class="event-title">Encontro<br>Young Connection</h2>
+      <p class="event-subtitle">Edição 2026 &nbsp;·&nbsp; Uma experiência única</p>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="label">📅 Data</div>
+          <div class="value highlight">15 de setembro, 2026</div>
+        </div>
+        <div class="info-item">
+          <div class="label">⏰ Horário</div>
+          <div class="value">19h00 – 23h00</div>
+        </div>
+        <div class="info-item">
+          <div class="label">📍 Local</div>
+          <div class="value">chácara parambu</div>
+        </div>
+        <a class="info-item" href="https://chat.whatsapp.com/JXH8hm1md8o7wmUc5i0Fmt" target="_blank" rel="noopener noreferrer">
+          <div class="label">
+            <svg class="whatsapp-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            Grupo do evento
+          </div>
+          <div class="value highlight">Entrar no grupo</div>
+        </a>
+      </div>
+
+      <p class="event-description">
+        🌿✨ Vem aí um momento muito especial de comunhão!
+
+O nosso encontro será na Chácara Parambu, e começaremos a partir das 13h, vivendo juntos momentos incríveis até o dia seguinte, após o café da manhã. ☕🤍
+
+Será um tempo de muita comunhão, diversão, brincadeiras e conexão! E, claro, teremos também o nosso culto, um momento especial para buscarmos a presença de Deus juntos. 🙏✨
+
+Você não pode ficar de fora! Prepare-se para viver momentos inesquecíveis ao lado da nossa família de jovens. 💚
+        <!-- O <strong>Young Connection</strong> é um evento criado para uma geração de jovens apaixonados por
+        <strong>Jesus</strong>, que querem se conectar com Deus, crescer na fé e transformar o mundo ao seu redor.
+         Com momentos marcantes de louvor, pregações edificantes, dinâmicas de comunhão e a presença manifesta do Espírito Santo, esta edição promete impactar e marcar a sua vida de forma inesquecível.<br><br>
+        Sua contribuição ajuda a custear <strong>estrutura, alimentação, material e
+        premiações</strong> para que todos possam viver essa experiência ao máximo.
+        <strong>Cada real faz diferença!</strong> -->
+      </p>
+
+    </div>
+
+    <!-- ── RIGHT: Donation ── -->
+    <div class="card right-card">
+      <div class="donation-label">💜 Contribua agora</div>
+
+      <h2 class="donation-title">Faça sua<br>Contribuição</h2>
+      <p class="donation-desc">
+        “Oh! Como é bom e agradável viverem unidos os irmãos!”
+— Salmos 133:1 🙌
+      </p>
+
+      <!-- Value chips -->
+      <div class="value-selector">
+        <p class="vs-label">Valor da  contribuição</p>
+        <div class="value-chips">
+          <div class="chip active">R$ 25,00</div>
+        </div>
+      </div>
+
+      <!-- PIX Box -->
+      <div class="pix-box">
+        <div class="pix-header">
+          <div class="pix-header-left">
+            <div class="pix-icon">⚡</div>
+            <div>
+              <div class="pix-title-text">Chave Pix</div>
+              <div class="pix-subtitle">Transferência instantânea</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pix-key-row">
+          <span class="pix-key-value" id="pixKey">Julianabento992@gmail.com</span>
+          <button class="copy-btn" id="copyBtn" onclick="copyPix()">Copiar</button>
+        </div>
+
+        <div class="pix-name-row">
+           Favorecido: <span>JULIANA DA SILVA SOARES BENTO</span>
+        </div>
+      </div>
+
+      <!-- WhatsApp Button -->
+      <a
+        href="https://wa.me/5562993946847?text=Ol%C3%A1!%20Realizei%20minha%20contribui%C3%A7%C3%A3o%20para%20o%20Young%20Connection!%20Segue%20o%20comprovante.%20%F0%9F%8E%89"
+        target="_blank"
+        class="whatsapp-btn"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        <div>
+          Enviar Comprovante
+          <span class="whatsapp-btn-sub">Clique para abrir o WhatsApp</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 <strong>Young Connection</strong> &nbsp;·&nbsp; Conecte • Compartilhe • Transforme 🌍</p>
+  </footer>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast">✅ &nbsp;Chave copiada!</div>
+
+  <script>
+    function copyPix() {
+      const pixKey = document.getElementById('pixKey').textContent.trim();
+      const copyButton = document.getElementById('copyBtn');
+
+      navigator.clipboard.writeText(pixKey).then(() => {
+        copyButton.textContent = 'Copiado';
+        copyButton.classList.add('copied');
+        document.getElementById('toast').classList.add('show');
+
+        setTimeout(() => {
+          copyButton.textContent = 'Copiar';
+          copyButton.classList.remove('copied');
+          document.getElementById('toast').classList.remove('show');
+        }, 2200);
+      });
+    }
+  </script>
+</body>
+</html>
