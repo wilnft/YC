@@ -1,0 +1,22 @@
+{
+  "agenda": [],
+  "posts": [
+    {
+      "title": "Conexão Jovem: um encontro para guardar no coração",
+      "date": "26/09",
+      "category": "Evento realizado",
+      "image": "assets/evento-1.jpeg",
+      "excerpt": "Um encontro de comunhão, alegria e propósito. Este espaço pode receber o resumo, fotos e testemunhos de cada evento.",
+      "link": "#"
+    },
+    {
+      "title": "Juntos, cada peça encontra seu lugar",
+      "date": "26/09",
+      "category": "Momentos",
+      "image": "assets/evento-2.jpeg",
+      "excerpt": "A identidade visual da Aliança Jovem traduz uma ideia simples: ninguém caminha sozinho. Aqui você pode registrar os melhores momentos.",
+      "link": "#"
+    }
+  ],
+  "instagram": []
+}

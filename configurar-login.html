@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Configuração | Aliança Jovem</title><link rel="stylesheet" href="admin.css">
+</head>
+<body class="auth-page setup-page">
+<main class="setup-card">
+  <a class="auth-brand" href="index.html"><b>AJ</b><span><strong>ALIANÇA</strong><small>JOVEM</small></span></a>
+  <span class="setup-kicker">CONFIGURAÇÃO INICIAL</span>
+  <h1>Coloque o painel no ar.</h1>
+  <p class="setup-intro">O login real usa o Supabase. Eu já deixei o site, banco, segurança e upload preparados. Falta apenas conectar o seu projeto Supabase.</p>
+
+  <div class="setup-steps">
+    <div><b>1</b><span>Crie um projeto gratuito no Supabase.</span></div>
+    <div><b>2</b><span>Abra <strong>SQL Editor</strong> e execute <code>supabase/schema.sql</code>.</span></div>
+    <div><b>3</b><span>Em <strong>Authentication → Users</strong>, crie o e-mail e a senha do administrador.</span></div>
+    <div><b>4</b><span>Em <strong>Project Settings → API</strong>, copie a <strong>Project URL</strong> e a chave <strong>anon public</strong>.</span></div>
+    <div><b>5</b><span>Cole os dois valores abaixo e salve em <code>config.js</code>.</span></div>
+  </div>
+
+  <label>Project URL<input id="supabaseUrl" placeholder="https://seu-projeto.supabase.co"></label>
+  <label>anon public key<input id="supabaseKey" placeholder="eyJhbGciOiJIUzI1NiIs..." autocomplete="off"></label>
+  <button id="generate" class="primary-btn">Gerar configuração <span>→</span></button>
+  <div id="result" class="setup-result hidden"></div>
+  <div class="setup-note"><strong>Importante:</strong> nunca cole aqui a chave <code>service_role</code>. A chave correta para o navegador é <code>anon public</code>.</div>
+  <a class="back-link" href="login.html">← Ir para o login</a>
+</main>
+<script>
+const url=document.querySelector('#supabaseUrl'),key=document.querySelector('#supabaseKey'),result=document.querySelector('#result');
+document.querySelector('#generate').onclick=()=>{
+ const u=url.value.trim(),k=key.value.trim();
+ if(!u||!k){result.className='setup-result error';result.textContent='Preencha os dois campos.';return}
+ const text=`window.AL_JOVEM_CONFIG = {\n  SUPABASE_URL: "${u}",\n  SUPABASE_ANON_KEY: "${k}"\n};`;
+ result.className='setup-result';
+ result.innerHTML='<strong>Configuração pronta.</strong><p>Abra o arquivo <b>config.js</b> e substitua o conteúdo pelo bloco abaixo:</p><pre></pre><button id="copy" class="copy-btn">Copiar configuração</button>';
+ result.querySelector('pre').textContent=text;
+ result.querySelector('#copy').onclick=async()=>{await navigator.clipboard.writeText(text);result.querySelector('#copy').textContent='Copiado ✓'};
+};
+</script>
+</body></html>

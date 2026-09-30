@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#020C55">
+  <meta name="description" content="Aliança Jovem — agenda, eventos, momentos de louvor e vida cristã.">
+  <title>Aliança Jovem | Juntos por um propósito maior</title>
+  <link rel="icon" type="image/png" href="assets/aj-logo.png">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .brand{align-items:center}
+    .brand-logo{display:block;flex:0 0 auto;object-fit:contain;object-position:50% 50%}
+    .brand-wordmark strong{font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:950;letter-spacing:-1px}
+    .brand-wordmark small{font-family:Arial,Helvetica,sans-serif;font-size:25px;font-weight:950;font-style:italic;letter-spacing:-1.5px}
+    .instagram-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,344px),344px));justify-content:center}
+    .post-card{position:relative;cursor:zoom-in}
+    .post-expand-trigger{position:absolute;inset:0;z-index:1;width:100%;height:100%;padding:0;border:0;background:transparent;cursor:zoom-in}
+    .post-expand-trigger:focus-visible{outline:3px solid var(--green);outline-offset:3px}
+    .post-link{position:relative;z-index:2}
+    .post-dialog{width:min(920px,calc(100% - 32px));max-height:calc(100dvh - 32px);margin:auto;padding:0;overflow:auto;border:1px solid rgba(156,255,22,.5);border-radius:18px;background:#031050;color:#fff;box-shadow:0 24px 80px rgba(0,0,0,.55)}
+    .post-dialog[open]{animation:post-dialog-enter .28s cubic-bezier(.2,.8,.2,1) both}
+    .post-dialog::backdrop{background:rgba(0,0,0,.76);backdrop-filter:blur(5px);animation:post-backdrop-enter .28s ease both}
+    .post-dialog-close{position:sticky;top:12px;z-index:3;display:grid;width:40px;height:40px;margin:12px 12px -52px auto;place-items:center;border:1px solid rgba(255,255,255,.5);border-radius:50%;background:rgba(2,12,75,.88);color:#fff;font-size:26px;line-height:1;cursor:pointer}
+    .post-dialog-content .post-card{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr);min-height:min(70vh,680px);overflow:hidden;border:0;border-radius:0;box-shadow:none;cursor:default}
+    .post-dialog-content .post-cover{height:100%;min-height:430px;background:#020C55}
+    .post-dialog-content .post-cover img{object-fit:contain}
+    .post-dialog-content .post-content{align-self:center;padding:clamp(24px,4vw,52px)}
+    .post-dialog-content .post-content h3{font-size:clamp(24px,3vw,36px);line-height:1.1}
+    .post-dialog-content .post-content p{display:block;overflow:visible;line-clamp:unset;-webkit-line-clamp:unset;-webkit-box-orient:initial}
+    .post-dialog-content .post-link{display:inline-block;margin-top:18px}
+    @keyframes post-dialog-enter{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes post-backdrop-enter{from{background:rgba(0,0,0,0)}to{background:rgba(0,0,0,.76)}}
+    @media(prefers-reduced-motion:reduce){.post-dialog[open],.post-dialog::backdrop{animation:none}}
+    @media(max-width:900px){.brand-wordmark strong{font-size:22px}.brand-wordmark small{font-size:25px}}
+    @media(max-width:620px){
+      .hero{min-height:0;background-position:center top;background-size:100% auto;background-repeat:no-repeat}
+      .hero-overlay{background:linear-gradient(180deg,rgba(2,12,75,.2),rgba(2,12,75,.45) 55%,rgba(2,12,75,.9))}
+      .hero-pattern-line{display:none}
+      .hero-inner{min-height:0;padding:48px 0 96px;gap:32px}
+      .hero-copy{min-width:0;padding:0}
+      .hero-branding{font-size:72px;line-height:.76;letter-spacing:-2px;transform:rotate(-2deg)}
+      .hero-branding span{font-size:82px}
+      .hero-branding i{display:none}
+      .hero-kicker{font-size:19px;line-height:1.3}
+      .hero-copy p{font-size:16px;line-height:1.55}
+      .hero-verse-box p{font-size:18px}
+      .hero-verse-box{max-width:100%}
+      .quick-card{grid-template-columns:48px minmax(0,1fr) 36px;gap:10px;padding:18px 14px}
+      .quick-icon{width:40px;height:40px}
+      .quick-card strong{font-size:19px}
+      .quick-card small{font-size:12px;line-height:1.4}
+      .section-title-row,.instagram-heading{flex-wrap:wrap;align-items:center;gap:16px}
+      .section-title-row>div,.instagram-heading>div{min-width:0;gap:10px}
+      .section-title-row h2,.instagram-heading h2{font-size:20px;line-height:1.15}
+      .section-title-row>a{margin-left:auto;white-space:nowrap}
+      .latest-layout,.post-grid,.agenda-list{grid-template-columns:minmax(0,1fr)}
+      .instagram-grid{grid-template-columns:minmax(0,min(100%,344px));justify-content:center}
+      .post-cover{height:auto;aspect-ratio:16/9}
+      .post-cover img{object-fit:contain;background:#071B75}
+      .post-content p{display:block;overflow:visible;line-clamp:unset;-webkit-line-clamp:unset;-webkit-box-orient:initial}
+      .agenda-heading{align-items:flex-start}
+      .agenda-heading>p{max-width:none;flex-basis:100%;line-height:1.5}
+      .agenda-card{min-width:0}
+      .agenda-meta span{overflow-wrap:anywhere}
+      .instagram-heading{justify-content:space-between}
+      .outline-btn{white-space:nowrap}
+      .instagram-card{min-height:0;overflow:visible}
+      .instagram-card blockquote{max-width:100%!important}
+      .post-dialog{width:calc(100% - 20px);max-height:calc(100dvh - 20px)}
+      .post-dialog-content .post-card{grid-template-columns:minmax(0,1fr);min-height:0}
+      .post-dialog-content .post-cover{height:auto;min-height:0;aspect-ratio:16/9}
+      .post-dialog-content .post-content{padding:24px 20px 28px}
+      .about-content{gap:30px}
+      .about-logo-panel{min-height:240px}
+      .about-logo-panel span{padding:0 12px;text-align:center;font-size:9px;letter-spacing:1px}
+      .about-copy h2{font-size:40px;line-height:.98}
+      .footer-main{gap:22px}
+      .footer-brand{flex-wrap:wrap}
+      .footer-brand p{flex-basis:100%}
+      .footer-slogan{font-size:10px;line-height:1.6;letter-spacing:1px}
+      .footer-social{margin-left:0}
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="#inicio" aria-label="Aliança Jovem">
+        <img class="brand-logo" src="assets/aj-logo.png" alt="AJ">
+        <span class="brand-wordmark"><strong>ALIANÇA</strong><small>JOVEM</small></span>
+      </a>
+
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
+
+      <nav id="mainNav">
+        <a class="active" href="#inicio">⌂&nbsp; INÍCIO</a>
+        <a href="#sobre">SOBRE</a>
+        <a href="#agenda">AGENDA</a>
+        <a href="#posts">EVENTOS</a>
+        <a href="#instagram">INSTAGRAM</a>
+        <a href="#contato">CONTATO</a>
+      </nav>
+
+      <a class="admin-pill" href="login.html">▣ &nbsp; ÁREA ADMIN</a>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <section class="hero">
+      <div class="hero-overlay"></div>
+      <div class="hero-pattern-line"></div>
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <div class="hero-branding">ALIANÇA <span>JOVEM</span><i>⌁</i></div>
+          <div class="hero-kicker">JUNTOS POR UM PROPÓSITO MAIOR!</div>
+          <p>Somos a Aliança Jovem, um movimento que busca servir a Deus, viver o Evangelho e impactar vidas através da comunhão, adoração e do amor de Cristo.</p>
+          <a class="lime-btn" href="#sobre">CONHEÇA MAIS <b>→</b></a>
+        </div>
+        <div class="hero-verse-box">
+          <span class="quote">“</span>
+          <p>“Ninguém despreze a tua juventude, mas seja exemplo dos fiéis...”</p>
+          <strong>1 Timóteo 4:12</strong>
+        </div>
+      </div>
+      <div class="hero-swoosh"></div>
+    </section>
+
+    <section class="quick-links">
+      <div class="container quick-grid">
+        <a class="quick-card" href="#agenda">
+          <svg class="quick-icon" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="10" width="36" height="32" rx="4"></rect><path d="M15 6v8M33 6v8M6 19h36M15 27h5M27 27h5M15 34h5"></path></svg>
+          <span><strong>AGENDA</strong><small>Confira os próximos<br>eventos e atividades.</small></span>
+          <b class="round-arrow">→</b>
+        </a>
+        <a class="quick-card" href="#posts">
+          <svg class="quick-icon" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="19" cy="15" r="7"></circle><path d="M5 40v-4a14 14 0 0 1 28 0v4M33 10a7 7 0 0 1 0 14M37 29a11 11 0 0 1 6 10v1"></path></svg>
+          <span><strong>EVENTOS</strong><small>Acompanhe os eventos<br>que já aconteceram.</small></span>
+          <b class="round-arrow">→</b>
+        </a>
+        <a class="quick-card" href="#instagram">
+          <svg class="quick-icon" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="38" height="38" rx="11"></rect><circle cx="24" cy="24" r="9"></circle><circle cx="36" cy="12" r="1.5" fill="currentColor" stroke="none"></circle></svg>
+          <span><strong>INSTAGRAM</strong><small>Veja nossas postagens<br>e acompanhe em tempo real.</small></span>
+          <b class="round-arrow">→</b>
+        </a>
+      </div>
+    </section>
+
+    <section class="latest-section image-backdrop-section" id="posts">
+      <div class="container">
+        <div class="section-title-row">
+          <div><span class="section-dash"></span><h2>ÚLTIMOS POSTS</h2></div>
+          <a href="#posts">VER TODOS <b>→</b></a>
+        </div>
+        <div id="postGrid" class="post-grid"></div>
+      </div>
+    </section>
+
+    <section class="agenda-section" id="agenda">
+      <div class="container">
+        <div class="section-title-row agenda-heading">
+          <div><span class="section-dash"></span><h2>PRÓXIMOS EVENTOS</h2></div>
+          <p>Encontros para adorar, servir, crescer e viver a fé em comunidade.</p>
+        </div>
+        <div id="agendaList" class="agenda-list"></div>
+        <div id="agendaEmpty" class="empty-state hidden">
+          <div class="empty-icon">✦</div>
+          <h3>Nenhum próximo evento cadastrado</h3>
+          <p>Os próximos eventos aparecerão aqui quando forem publicados.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="instagram-section" id="instagram">
+      <div class="container">
+        <div class="instagram-heading">
+          <div><span class="section-dash"></span><h2>INSTAGRAM</h2></div>
+          <a class="outline-btn" href="https://www.instagram.com/aliancajovembdc/" target="_blank" rel="noopener">VER PERFIL <b>→</b></a>
+        </div>
+        <div id="instagramGrid" class="instagram-grid"></div>
+        <div id="instagramEmpty" class="instagram-empty">
+          <img src="assets/aj-logo.png" alt="AJ">
+          <h3>Momentos da Aliança Jovem</h3>
+          <p>Cadastre Reels e publicações pelo painel administrativo para exibi-los aqui.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="about-section about-backdrop" id="sobre">
+      <div class="container about-content">
+        <div class="about-logo-panel">
+          <img src="assets/aj-logo.png" alt="Símbolo Aliança Jovem">
+          <span>ADORAR • SERVIR • VIVER • IMPACTAR</span>
+        </div>
+        <div class="about-copy">
+          <span class="section-dash"></span>
+          <div class="mini-kicker">QUEM SOMOS</div>
+          <h2>UMA GERAÇÃO<br><em>EM MOVIMENTO.</em></h2>
+          <p>A Aliança Jovem é um movimento de jovens que busca viver o Evangelho com propósito, comunhão e adoração.</p>
+          <p>Aqui registramos nossos encontros, compartilhamos aquilo que Deus está fazendo e deixamos a agenda pronta para o próximo passo.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="post-dialog" id="postDialog" aria-label="Post em destaque">
+    <button class="post-dialog-close" type="button" aria-label="Fechar destaque">×</button>
+    <div class="post-dialog-content" id="postDialogContent"></div>
+  </dialog>
+
+  <footer id="contato">
+    <div class="container footer-main">
+      <div class="footer-brand">
+        <img src="assets/aj-logo.png" alt="AJ">
+        <div><strong>ALIANÇA</strong><span>JOVEM</span></div>
+        <p>Juntos por um propósito maior.</p>
+      </div>
+      <div class="footer-slogan">ADORAR <i>•</i> SERVIR <i>•</i> VIVER <i>•</i> IMPACTAR</div>
+      <div class="footer-social"><a href="https://www.instagram.com/aliancajovembdc/" target="_blank" rel="noopener">◎</a><a href="#instagram">▶</a><a href="mailto:aliancajovem37@gmail.com">✉</a></div>
+    </div>
+    <div class="footer-bottom">© <span id="year"></span> Aliança Jovem. </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+  <script async src="https://www.instagram.com/embed.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#02114F"><title>Login | Aliança Jovem</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="auth-page">
+<div class="auth-bg"><span></span><span></span><span></span></div>
+<main class="auth-card">
+  <a href="index.html" class="auth-brand"><b>AJ</b><span><strong>ALIANÇA</strong><small>JOVEM</small></span></a>
+  <div class="auth-copy"><span>ÁREA ADMINISTRATIVA</span><h1>Bem-vindo de volta.</h1><p>Entre para publicar eventos, posts e links do Instagram sem mexer no código.</p></div>
+  <form id="loginForm">
+    <label>E-mail / usuário<input id="email" type="email" autocomplete="username" required placeholder="seu@email.com"></label>
+    <label>Senha<input id="password" type="password" autocomplete="current-password" required placeholder="••••••••"></label>
+    <button class="primary-btn" type="submit">Entrar <span>→</span></button>
+    <p id="loginError" class="error"></p>
+  </form>
+  <a href="index.html" class="back-link">← Voltar para o site</a>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+const cfg=window.AL_JOVEM_CONFIG;
+const ok=cfg&&!cfg.SUPABASE_URL.includes("COLE_AQUI")&&!cfg.SUPABASE_ANON_KEY.includes("COLE_AQUI");
+const sb=ok?supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY):null;
+const form=document.querySelector("#loginForm"),err=document.querySelector("#loginError");
+form.addEventListener("submit",async e=>{
+  e.preventDefault();err.textContent="";
+  if(!sb){err.textContent="Configure o Supabase em config.js antes de entrar.";return}
+  const {error}=await sb.auth.signInWithPassword({email:email.value.trim(),password:password.value});
+  if(error){err.textContent="Usuário ou senha inválidos.";return}
+  location.href="admin.html";
+});
+</script>
+</body>
+</html>
