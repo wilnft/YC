@@ -13,7 +13,7 @@
   <div class="side-nav">
     <button data-panel="dashboard" class="active">▦ Visão geral</button>
     <button data-panel="events">◷ Agenda</button>
-    <button data-panel="posts">▣ Posts</button>
+    <button data-panel="posts">▣ Vídeos</button>
     <button data-panel="instagram">◎ Instagram</button>
     <button data-panel="visual">▧ Visual</button>
   </div>
@@ -25,7 +25,7 @@
   <div id="setupWarning" class="notice error hidden">Configure o Supabase em <b>config.js</b> e execute o SQL de <b>supabase/schema.sql</b> antes de usar o painel.</div>
 
   <section id="panel-dashboard" class="panel active">
-    <div class="stats"><div class="stat"><strong id="statEvents">0</strong><span>Eventos</span></div><div class="stat"><strong id="statPosts">0</strong><span>Posts</span></div><div class="stat"><strong id="statInstagram">0</strong><span>Instagram</span></div></div>
+    <div class="stats"><div class="stat"><strong id="statEvents">0</strong><span>Eventos</span></div><div class="stat"><strong id="statPosts">0</strong><span>Vídeos</span></div><div class="stat"><strong id="statInstagram">0</strong><span>Instagram</span></div></div>
     <div class="card"><div class="card-head"><div><h2>Central de publicação</h2><p style="color:var(--muted);font-size:13px">Use o menu para cadastrar conteúdo sem editar código.</p></div></div></div>
   </section>
 
@@ -46,18 +46,20 @@
   </section>
 
   <section id="panel-posts" class="panel">
-    <div class="card"><div class="card-head"><h2>Posts / notícias</h2><button class="small-btn" id="newPost">+ Novo post</button></div>
+    <div class="card"><div class="card-head"><h2>Vídeos do YouTube</h2><button class="small-btn" id="newPost">+ Novo vídeo</button></div>
       <form id="postForm" class="hidden">
         <div class="form-grid">
           <label>Título<input id="postTitle" required></label><label>Data<input id="postDate" placeholder="26/09"></label>
-          <label>Categoria<input id="postCategory" placeholder="Evento realizado"></label><label>Imagem<input id="postImageFile" type="file" accept="image/*"><small>Escolha uma foto do evento. Ela será enviada automaticamente.</small><input id="postImage" type="hidden"></label>
-          <label class="full">Resumo<textarea id="postExcerpt"></textarea></label><label class="full">Link da publicação<input id="postLink" placeholder="https://..."></label>
+          <label>Categoria<input id="postCategory" placeholder="Louvor, evento, mensagem"></label>
+          <label class="full">URL do vídeo no YouTube<input id="postYoutubeUrl" type="url" placeholder="https://www.youtube.com/watch?v=..."><small>A miniatura e o player serão carregados do próprio vídeo.</small></label>
+          <input id="postLegacyLink" type="hidden">
+          <label class="full">Resumo<textarea id="postExcerpt"></textarea></label>
           <label><input id="postPublished" type="checkbox" checked style="width:auto;display:inline;margin-right:7px"> Publicar no site</label>
         </div>
         <div class="form-actions"><button class="save-btn">Salvar post</button><button type="button" class="cancel-btn" id="cancelPost">Cancelar</button></div>
       </form>
     </div>
-    <div class="card table-wrap"><table class="table"><thead><tr><th>Imagem</th><th>Post</th><th>Data</th><th>Status</th><th></th></tr></thead><tbody id="postsTable"></tbody></table></div>
+    <div class="card table-wrap"><table class="table"><thead><tr><th>Mídia</th><th>Vídeo</th><th>Data</th><th>Status</th><th></th></tr></thead><tbody id="postsTable"></tbody></table></div>
   </section>
 
   <section id="panel-visual" class="panel">

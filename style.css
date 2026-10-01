@@ -1,3 +1,20 @@
+
+body .agenda-section{background:#F4F7FF}
+body .agenda-section:before{background:linear-gradient(rgba(255,255,255,.92),rgba(255,255,255,.96)),url("assets/aj-pattern.jpg") center/cover;opacity:1}
+body .agenda-section .section-title-row h2{color:var(--navy)}
+body .agenda-section .agenda-heading>p{color:#596580}
+body .agenda-section .agenda-card{background:#fff;border-color:#DCE4F7;box-shadow:0 12px 30px rgba(2,12,75,.10)}
+body .agenda-section .agenda-card:before{opacity:.28}
+body .agenda-section .agenda-card h3{color:var(--navy)}
+body .agenda-section .date-number{color:var(--blue)}
+body .agenda-section .date-month{color:#687394}
+body .agenda-section .agenda-meta{color:#596580}
+body .agenda-section .agenda-meta b{color:var(--navy)}
+body .agenda-section .empty-state{border-color:#C9D3E8;color:#687394}
+body .agenda-section .empty-state h3{color:var(--navy)}
+body .instagram-section{background:#010A44}
+body .instagram-section:before{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(90deg,rgba(1,10,68,.97),rgba(1,10,68,.90)),url("assets/hero-worship-bg.jpg") center/cover;opacity:.48}
+body .instagram-section:after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(112deg,transparent 0 17%,rgba(255,255,255,.02) 17.5%,rgba(255,255,255,.1) 18.2%,rgba(255,255,255,.025) 19%,transparent 19.5%),linear-gradient(112deg,transparent 0 65%,rgba(255,255,255,.02) 65.4%,rgba(255,255,255,.08) 66.1%,rgba(255,255,255,.02) 66.8%,transparent 67.3%)}
 .quick-icon{display:block;width:48px;height:48px;color:var(--green);justify-self:center}
 :root{
   --navy:#020C55;

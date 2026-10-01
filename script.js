@@ -68,14 +68,27 @@ function renderAgenda(items){
 function renderPosts(items){
   const grid=document.querySelector("#postGrid");grid.innerHTML="";
   (items||[]).forEach(item=>{
-    const card=document.createElement("article");card.className="post-card";
-    card.innerHTML=`<div class="post-cover"><img src="${safeUrl(item.image||"assets/evento-1.jpeg")}" alt="${escapeHtml(item.title)}" loading="lazy"></div>
+    const videoId=youtubeVideoId(item.link),card=document.createElement("article");card.className=videoId?"post-card post-video-card":"post-card";
+    const media=videoId?`<iframe src="https://www.youtube.com/embed/${videoId}?rel=0&playsinline=1" title="${escapeHtml(item.title)} - YouTube" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="origin-when-cross-origin" allowfullscreen></iframe>`:`<img src="${safeUrl(item.image||"assets/evento-1.jpeg")}" alt="${escapeHtml(item.title)}" loading="lazy">`;
+    card.innerHTML=`<div class="post-cover${videoId?" post-video-cover":""}">${media}</div>
       <div class="post-content"><span class="post-date">${escapeHtml(item.category||"Post")} · ${escapeHtml(item.date||"")}</span>
       <h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.excerpt||"")}</p>
-      ${item.link&&item.link!=="#"?`<a class="post-link" href="${safeUrl(item.link)}" target="_blank" rel="noopener">Ler publicação →</a>`:""}</div>
-      <button class="post-expand-trigger" type="button" aria-label="Ampliar post: ${escapeHtml(item.title)}"></button>`;
+      ${item.link&&item.link!=="#"&&!videoId?`<a class="post-link" href="${safeUrl(item.link)}" target="_blank" rel="noopener">Ler publicação →</a>`:""}</div>
+      ${videoId?"":`<button class="post-expand-trigger" type="button" aria-label="Ampliar post: ${escapeHtml(item.title)}"></button>`}`;
     grid.appendChild(card);
   });
+}
+function youtubeVideoId(value){
+  try{
+    const url=new URL(value),host=url.hostname.toLowerCase().replace(/^www\./,"");
+    let id="";
+    if(host==="youtu.be")id=url.pathname.split("/").filter(Boolean)[0]||"";
+    else if(["youtube.com","m.youtube.com","music.youtube.com","youtube-nocookie.com"].includes(host)){
+      if(url.pathname==="/watch")id=url.searchParams.get("v")||"";
+      else if(/^\/(embed|shorts|live)\//.test(url.pathname))id=url.pathname.split("/")[2]||"";
+    }
+    return /^[A-Za-z0-9_-]{11}$/.test(id)?id:"";
+  }catch{return ""}
 }
 function renderInstagram(items){
   const grid=document.querySelector("#instagramGrid"),empty=document.querySelector("#instagramEmpty");grid.innerHTML="";
