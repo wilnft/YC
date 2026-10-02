@@ -18,5 +18,19 @@
       "link": "#"
     }
   ],
-  "instagram": []
+  "instagram": [],
+  "albums": [
+    {
+      "id": "demo-1",
+      "title": "Conexão Jovem",
+      "event_date": "2025-09-26",
+      "category": "Conexão Jovem",
+      "caption": "Um encontro de comunhão, alegria e propósito.",
+      "photos": [
+        "assets/evento-1.jpeg",
+        "assets/evento-2.jpeg"
+      ],
+      "videos": []
+    }
+  ]
 }

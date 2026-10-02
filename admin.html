@@ -13,6 +13,7 @@
   <div class="side-nav">
     <button data-panel="dashboard" class="active">▦ Visão geral</button>
     <button data-panel="events">◷ Agenda</button>
+    <button data-panel="albums">▤ Eventos (álbum)</button>
     <button data-panel="posts">▣ Vídeos</button>
     <button data-panel="instagram">◎ Instagram</button>
     <button data-panel="visual">▧ Visual</button>
@@ -37,12 +38,32 @@
           <label>Horário<input id="eventTime" placeholder="14:00"></label><label>Local<input id="eventLocation" placeholder="Chácara Parambu"></label>
           <label>Capa do evento<input id="eventCoverFile" type="file" accept="image/*"><small>Opcional.</small><input id="eventCover" type="hidden"></label>
           <label>Valor<input id="eventPrice" placeholder="R$ 30,00"></label><label>Tipo<input id="eventType" placeholder="Conexão Jovem"></label>
+          <label class="full"><input id="eventRegistrationEnabled" type="checkbox" style="width:auto;display:inline;margin-right:7px"> Exibir botão Inscreva-se</label>
+          <label id="eventWhatsappField" class="full hidden">WhatsApp para inscrição<input id="eventWhatsappNumber" type="tel" inputmode="tel" autocomplete="tel" placeholder="5511999999999"><small>Inclua o código do país e o DDD.</small></label>
           <label><input id="eventPublished" type="checkbox" checked style="width:auto;display:inline;margin-right:7px"> Publicar no site</label>
         </div>
         <div class="form-actions"><button class="save-btn">Salvar evento</button><button type="button" class="cancel-btn" id="cancelEvent">Cancelar</button></div>
       </form>
     </div>
     <div class="card table-wrap"><table class="table"><thead><tr><th>Data</th><th>Evento</th><th>Hora</th><th>Local</th><th>Status</th><th></th></tr></thead><tbody id="eventsTable"></tbody></table></div>
+  </section>
+
+  <section id="panel-albums" class="panel">
+    <div class="card"><div class="card-head"><h2>Álbum de eventos</h2><button class="small-btn" id="newAlbum">+ Novo post</button></div>
+      <form id="albumForm" class="hidden">
+        <div class="form-grid">
+          <label>Título<input id="alTitle" required></label><label>Data do evento<input id="alDate" type="date" required></label>
+          <label>Categoria<input id="alCategory" placeholder="Conexão Jovem, Culto, Retiro..."></label>
+          <label><input id="alPublished" type="checkbox" checked style="width:auto;display:inline;margin-right:7px"> Publicar no site</label>
+          <label class="full">Legenda<textarea id="alCaption" placeholder="Conte como foi o evento"></textarea></label>
+          <label class="full">Adicionar fotos<input id="alFiles" type="file" accept="image/*" multiple><small>Pode escolher várias de uma vez (JPG, PNG, WEBP; até 8 MB cada). A primeira será a capa.</small></label>
+          <div class="full"><div id="alPhotos" class="visual-preview"></div></div>
+          <label class="full">URLs dos vídeos (uma por linha)<textarea id="alVideos" placeholder="https://www.youtube.com/watch?v=...&#10;https://vimeo.com/..."></textarea><small>Aceita YouTube, Vimeo, Instagram, Facebook ou link direto .mp4.</small></label>
+        </div>
+        <div class="form-actions"><button class="save-btn">Salvar post</button><button type="button" class="cancel-btn" id="cancelAlbum">Cancelar</button></div>
+      </form>
+    </div>
+    <div class="card table-wrap"><table class="table"><thead><tr><th>Capa</th><th>Evento</th><th>Data</th><th>Status</th><th></th></tr></thead><tbody id="albumsTable"></tbody></table></div>
   </section>
 
   <section id="panel-posts" class="panel">
@@ -92,5 +113,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script src="admin.js"></script>
+<script src="admin-albums.js"></script>
 </body>
 </html>

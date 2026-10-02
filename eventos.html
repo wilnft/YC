@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#020C55">
+  <meta name="description" content="Álbum de eventos da Aliança Jovem: fotos e vídeos dos nossos encontros.">
+  <title>Eventos | Aliança Jovem</title>
+  <link rel="icon" type="image/png" href="assets/aj-logo.png?v=2">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="eventos.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="index.html" aria-label="Aliança Jovem">
+        <img class="brand-logo" src="assets/aj-logo.png" alt="AJ">
+        <span class="brand-wordmark"><strong>ALIANÇA</strong><small>JOVEM</small></span>
+      </a>
+
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
+
+      <nav id="mainNav">
+        <a href="index.html">⌂&nbsp; INÍCIO</a>
+        <a href="index.html#sobre">SOBRE</a>
+        <a href="index.html#agenda">AGENDA</a>
+        <a class="active" href="eventos.html">EVENTOS</a>
+        <a href="index.html#instagram">INSTAGRAM</a>
+        <a href="index.html#contato">CONTATO</a>
+      </nav>
+
+    </div>
+  </header>
+
+  <main>
+    <section class="ev-hero">
+      <div class="container">
+        <span class="section-dash"></span>
+        <div class="mini-kicker">ÁLBUM</div>
+        <h1>NOSSOS <em>EVENTOS</em></h1>
+        <p>Fotos e vídeos dos encontros da Aliança Jovem. Reviva cada momento.</p>
+      </div>
+    </section>
+
+    <section class="latest-section image-backdrop-section ev-section">
+      <div class="container">
+        <div id="evFilters" class="ev-filters"></div>
+        <div id="evGrid" class="ev-grid"></div>
+        <div id="evEmpty" class="empty-state hidden">
+          <div class="empty-icon">✦</div>
+          <h3>Nenhum evento publicado ainda</h3>
+          <p>Os álbuns aparecerão aqui assim que forem publicados.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="ev-dialog" id="evDialog" aria-label="Álbum do evento">
+    <button class="ev-close" type="button" aria-label="Fechar">×</button>
+    <div id="evView"></div>
+  </dialog>
+
+  <footer id="contato">
+    <div class="container footer-main">
+      <div class="footer-brand">
+        <img src="assets/aj-logo.png" alt="AJ">
+        <div><strong>ALIANÇA</strong><span>JOVEM</span></div>
+        <p>Juntos por um propósito maior.</p>
+      </div>
+      <div class="footer-slogan">ADORAR <i>•</i> SERVIR <i>•</i> VIVER <i>•</i> IMPACTAR</div>
+      <div class="footer-social"><a href="https://www.instagram.com/aliancajovembdc/" target="_blank" rel="noopener">◎</a><a href="index.html#instagram">▶</a><a href="mailto:aliancajovem37@gmail.com">✉</a></div>
+    </div>
+    <div class="footer-bottom">© <span id="year"></span> Aliança Jovem. </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="eventos.js"></script>
+</body>
+</html>

@@ -66,7 +66,7 @@ async function uploadImage(file,folder="posts"){
   return data.publicUrl;
 }
 
-window.editEvent=r=>{editingId=r.id;showPanel("events");$("#eventForm").classList.remove("hidden");$("#eventTitle").value=r.title||"";$("#eventDate").value=r.date||"";$("#eventTime").value=r.time||"";$("#eventLocation").value=r.location||"";$("#eventPrice").value=r.price||"";$("#eventType").value=r.type||"";$("#eventCover").value=r.cover_image||"";$("#eventPublished").checked=!!r.published;scrollTop()};
+window.editEvent=r=>{editingId=r.id;showPanel("events");$("#eventForm").classList.remove("hidden");$("#eventTitle").value=r.title||"";$("#eventDate").value=r.date||"";$("#eventTime").value=r.time||"";$("#eventLocation").value=r.location||"";$("#eventPrice").value=r.price||"";$("#eventType").value=r.type||"";$("#eventCover").value=r.cover_image||"";$("#eventRegistrationEnabled").checked=!!r.registration_enabled;$("#eventWhatsappNumber").value=r.whatsapp_number||"";syncRegistrationFields();$("#eventPublished").checked=!!r.published;scrollTop()};
 window.editPost=r=>{editingId=r.id;showPanel("posts");$("#postForm").classList.remove("hidden");$("#postTitle").value=r.title||"";$("#postDate").value=r.date||"";$("#postCategory").value=r.category||"";const videoId=youtubeVideoId(r.link);$("#postYoutubeUrl").value=videoId?r.link:"";$("#postYoutubeUrl").required=!!videoId;$("#postLegacyLink").value=videoId?"":r.link||"";$("#postExcerpt").value=r.excerpt||"";$("#postPublished").checked=!!r.published;scrollTop()};
 window.editInstagram=r=>{editingId=r.id;showPanel("instagram");$("#instagramForm").classList.remove("hidden");$("#igTitle").value=r.title||"";$("#igUrl").value=r.url||"";$("#igPublished").checked=!!r.published;scrollTop()};
 window.deleteRow=async(table,id)=>{if(!confirm("Excluir este item?"))return;const{error}=await sb.from(table).delete().eq("id",id);if(error)notice(error.message,true);else{notice("Item excluído.");loadAll()}};
@@ -74,10 +74,11 @@ window.deleteRow=async(table,id)=>{if(!confirm("Excluir este item?"))return;cons
 function showPanel(name){
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));document.querySelector("#panel-"+name).classList.add("active");
   document.querySelectorAll(".side-nav button").forEach(b=>b.classList.toggle("active",b.dataset.panel===name));
-  const titles={dashboard:"Visão geral",events:"Agenda",posts:"Vídeos",instagram:"Instagram",visual:"Visual do site"};$("#pageTitle").textContent=titles[name]||"Painel";
+  const titles={dashboard:"Visão geral",events:"Agenda",posts:"Vídeos",albums:"Álbum de eventos",instagram:"Instagram",visual:"Visual do site"};$("#pageTitle").textContent=titles[name]||"Painel";
 }
 function scrollTop(){window.scrollTo({top:0,behavior:"smooth"})}
-function resetEvent(){editingId=null;$("#eventForm").reset();$("#eventCover").value="";$("#eventPublished").checked=true;$("#eventForm").classList.add("hidden")}
+function syncRegistrationFields(){const enabled=$("#eventRegistrationEnabled").checked;$("#eventWhatsappField").classList.toggle("hidden",!enabled);$("#eventWhatsappNumber").required=enabled}
+function resetEvent(){editingId=null;$("#eventForm").reset();$("#eventCover").value="";$("#eventPublished").checked=true;syncRegistrationFields();$("#eventForm").classList.add("hidden")}
 function resetPost(){editingId=null;$("#postForm").reset();$("#postYoutubeUrl").required=false;$("#postLegacyLink").value="";$("#postPublished").checked=true;$("#postForm").classList.add("hidden")}
 function resetInstagram(){editingId=null;$("#instagramForm").reset();$("#igPublished").checked=true;$("#instagramForm").classList.add("hidden")}
 
@@ -109,9 +110,10 @@ document.addEventListener("DOMContentLoaded",async()=>{
   document.querySelectorAll(".side-nav button").forEach(b=>b.onclick=()=>showPanel(b.dataset.panel));
   $("#logout").onclick=async()=>{await sb.auth.signOut();location.href="login.html"};
 
-  $("#newEvent").onclick=()=>{$("#eventForm").classList.remove("hidden");editingId=null;$("#eventForm").reset();$("#eventPublished").checked=true};
+  $("#newEvent").onclick=()=>{$("#eventForm").classList.remove("hidden");editingId=null;$("#eventForm").reset();$("#eventPublished").checked=true;syncRegistrationFields()};
   $("#cancelEvent").onclick=resetEvent;
-  $("#eventForm").onsubmit=async e=>{e.preventDefault();try{let cover=$("#eventCover").value||null;if($("#eventCoverFile").files[0])cover=await uploadImage($("#eventCoverFile").files[0],"events");await save("events",{title:$("#eventTitle").value.trim(),date:$("#eventDate").value,time:$("#eventTime").value.trim(),location:$("#eventLocation").value.trim(),price:$("#eventPrice").value.trim(),type:$("#eventType").value.trim(),cover_image:cover,published:$("#eventPublished").checked},resetEvent)}catch(err){notice(err.message,true)}};
+  $("#eventRegistrationEnabled").addEventListener("change",syncRegistrationFields);
+  $("#eventForm").onsubmit=async e=>{e.preventDefault();try{const registrationEnabled=$("#eventRegistrationEnabled").checked,whatsappNumber=$("#eventWhatsappNumber").value.replace(/\D/g,"");if(registrationEnabled&&(whatsappNumber.length<10||whatsappNumber.length>15))throw new Error("Informe o WhatsApp com código do país e DDD.");let cover=$("#eventCover").value||null;if($("#eventCoverFile").files[0])cover=await uploadImage($("#eventCoverFile").files[0],"events");await save("events",{title:$("#eventTitle").value.trim(),date:$("#eventDate").value,time:$("#eventTime").value.trim(),location:$("#eventLocation").value.trim(),price:$("#eventPrice").value.trim(),type:$("#eventType").value.trim(),cover_image:cover,registration_enabled:registrationEnabled,whatsapp_number:registrationEnabled?whatsappNumber:null,published:$("#eventPublished").checked},resetEvent)}catch(err){notice(err.message,true)}};
 
   $("#newPost").onclick=()=>{$("#postForm").classList.remove("hidden");editingId=null;$("#postForm").reset();$("#postYoutubeUrl").required=true;$("#postPublished").checked=true};
   $("#cancelPost").onclick=resetPost;

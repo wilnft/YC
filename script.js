@@ -8,6 +8,7 @@ const defaultData = {
   ],
   instagram:[]
 };
+let agendaItems=[];
 
 function configured(){
   return window.AL_JOVEM_CONFIG &&
@@ -53,17 +54,43 @@ function formatDateParts(dateString){
   if(Number.isNaN(date.getTime())) return {day:"--",month:""};
   return {day:String(date.getDate()).padStart(2,"0"),month:date.toLocaleDateString("pt-BR",{month:"short"}).replace(".","").toUpperCase()};
 }
+function agendaSignupLink(item,className="agenda-signup lime-btn small"){
+  const number=String(item.whatsapp_number||"").replace(/\D/g,"");
+  if(!item.registration_enabled||number.length<10||number.length>15)return "";
+  const message=encodeURIComponent(`Olá! Quero me inscrever no evento ${item.title||""}.`);
+  return `<a class="${className}" href="https://wa.me/${number}?text=${message}" target="_blank" rel="noopener">INSCREVA-SE <b>→</b></a>`;
+}
 function renderAgenda(items){
   const list=document.querySelector("#agendaList"),empty=document.querySelector("#agendaEmpty"); list.innerHTML="";
   if(!items?.length){empty.classList.remove("hidden");return} empty.classList.add("hidden");
-  [...items].sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(item=>{
-    const d=formatDateParts(item.date),card=document.createElement("article");card.className="agenda-card";
-    card.innerHTML=`<div class="date-box"><div class="date-number">${d.day}</div><div class="date-month">${d.month}</div></div>
+  agendaItems=[...items].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  agendaItems.forEach((item,index)=>{
+    const d=formatDateParts(item.date),card=document.createElement("article");card.className=`agenda-card${item.cover_image?" has-cover":""}`;card.dataset.agendaIndex=index;
+    const cover=item.cover_image?`<img class="agenda-cover" src="${safeUrl(item.cover_image)}" alt="Capa do evento ${escapeHtml(item.title)}" loading="lazy">`:"";
+    card.innerHTML=`${cover}<button class="agenda-open-trigger" type="button" aria-label="Abrir detalhes de ${escapeHtml(item.title)}"></button>
+      <div class="agenda-card-body"><div class="date-box"><div class="date-number">${d.day}</div><div class="date-month">${d.month}</div></div>
       <h3>${escapeHtml(item.title)}</h3><div class="agenda-meta"><span>◷ <b>${escapeHtml(item.time||"Horário a confirmar")}</b></span>
       <span>⌖ ${escapeHtml(item.location||"Local a confirmar")}</span>${item.price?`<span>◉ ${escapeHtml(item.price)}</span>`:""}</div>
-      <span class="tag">${escapeHtml(item.type||"Evento")}</span>`;
+      <span class="tag">${escapeHtml(item.type||"Evento")}</span>${agendaSignupLink(item)}</div>`;
     list.appendChild(card);
   });
+}
+function setupAgendaDialog(){
+  const list=document.querySelector("#agendaList"),dialog=document.querySelector("#agendaDialog"),content=document.querySelector("#agendaDialogContent");
+  let lastTrigger=null;
+  list.addEventListener("click",event=>{
+    const trigger=event.target.closest(".agenda-open-trigger");if(!trigger)return;
+    const item=agendaItems[Number(trigger.closest(".agenda-card").dataset.agendaIndex)];if(!item)return;
+    lastTrigger=trigger;
+    const d=formatDateParts(item.date),date=new Date(`${item.date}T12:00:00`),cover=item.cover_image?`<img src="${safeUrl(item.cover_image)}" alt="Capa do evento ${escapeHtml(item.title)}">`:"";
+    content.innerHTML=`${cover}<div class="agenda-dialog-body"><span class="agenda-dialog-date">${d.day} ${d.month} ${Number.isNaN(date.getTime())?"":date.getFullYear()}</span><h2>${escapeHtml(item.title)}</h2>
+      <div class="agenda-meta"><span>◷ <b>${escapeHtml(item.time||"Horário a confirmar")}</b></span><span>⌖ ${escapeHtml(item.location||"Local a confirmar")}</span>${item.price?`<span>◉ ${escapeHtml(item.price)}</span>`:""}</div>
+      <span class="tag">${escapeHtml(item.type||"Evento")}</span>${agendaSignupLink(item,"agenda-dialog-signup lime-btn")}</div>`;
+    dialog.showModal();dialog.querySelector(".agenda-dialog-close").focus();
+  });
+  dialog.querySelector(".agenda-dialog-close").addEventListener("click",()=>dialog.close());
+  dialog.addEventListener("click",event=>{if(event.target===dialog)dialog.close()});
+  dialog.addEventListener("close",()=>{content.replaceChildren();lastTrigger?.focus()});
 }
 function renderPosts(items){
   const grid=document.querySelector("#postGrid");grid.innerHTML="";
@@ -126,6 +153,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
   document.querySelector("#year").textContent=new Date().getFullYear();
   document.querySelector("#menuToggle").addEventListener("click",()=>document.querySelector("#mainNav").classList.toggle("open"));
   document.querySelectorAll("#mainNav a").forEach(a=>a.addEventListener("click",()=>document.querySelector("#mainNav").classList.remove("open")));
+  setupAgendaDialog();
   setupPostDialog();
   const data=await getData();applyVisualSettings(data.settings||{});renderAgenda(data.agenda);renderPosts(data.posts);renderInstagram(data.instagram);
 });
