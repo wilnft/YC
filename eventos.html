@@ -25,6 +25,7 @@
         <a href="index.html#sobre">SOBRE</a>
         <a href="index.html#agenda">AGENDA</a>
         <a class="active" href="eventos.html">EVENTOS</a>
+        <a href="mapa-celulas.html">CÉLULAS</a>
         <a href="index.html#instagram">INSTAGRAM</a>
         <a href="index.html#contato">CONTATO</a>
       </nav>
@@ -33,7 +34,13 @@
   </header>
 
   <main>
-    <section class="ev-hero">
+    <section class="ev-hero ev-carousel" id="evCarousel" aria-roledescription="carrossel" aria-label="Fotos dos eventos">
+      <div class="ev-slides" id="evSlides">
+        <div class="ev-slide on"><img src="assets/hero-worship-bg.jpg" alt=""></div>
+      </div>
+      <button class="ev-car-arrow prev hidden" type="button" aria-label="Foto anterior">‹</button>
+      <button class="ev-car-arrow next hidden" type="button" aria-label="Próxima foto">›</button>
+      <div class="ev-dots hidden" id="evDots"></div>
       <div class="container">
         <span class="section-dash"></span>
         <div class="mini-kicker">ÁLBUM</div>

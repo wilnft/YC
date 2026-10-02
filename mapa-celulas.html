@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#020A4B">
+  <meta name="description" content="Mapa de Células Jovem: encontre o culto de célula mais perto de você, chame no WhatsApp e trace a rota.">
+  <title>Mapa de Células Jovem | Aliança Jovem</title>
+  <link rel="icon" type="image/png" href="assets/aj-logo.png?v=2">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="eventos.css">
+  <link rel="stylesheet" href="mapa.css">
+</head>
+<body class="map-page">
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="index.html" aria-label="Aliança Jovem">
+        <img class="brand-logo" src="assets/aj-logo.png" alt="AJ">
+        <span class="brand-wordmark"><strong>ALIANÇA</strong><small>JOVEM</small></span>
+      </a>
+
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
+
+      <nav id="mainNav">
+        <a href="index.html">⌂&nbsp; INÍCIO</a>
+        <a href="index.html#sobre">SOBRE</a>
+        <a href="index.html#agenda">AGENDA</a>
+        <a href="eventos.html">EVENTOS</a>
+        <a class="active" href="mapa-celulas.html">CÉLULAS</a>
+        <a href="index.html#instagram">INSTAGRAM</a>
+        <a href="index.html#contato">CONTATO</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="mp-hero">
+      <div class="container">
+        <span class="section-dash"></span>
+        <div class="mini-kicker">CULTOS DE CÉLULA</div>
+        <h1>MAPA DE <em>CÉLULAS</em> JOVEM</h1>
+        <p>Encontre a célula mais perto de você. Toque em um pin para ver os detalhes, chamar no WhatsApp ou traçar a rota.</p>
+      </div>
+    </section>
+
+    <section class="mp-section">
+      <div class="container">
+        <div class="mp-layout">
+          <aside class="mp-list" aria-label="Lista de células">
+            <div class="mp-list-head"><b id="mpCount">0</b> <span>células</span></div>
+            <input id="mpSearch" class="mp-search" type="search" placeholder="Buscar por nome ou endereço" aria-label="Buscar célula">
+            <ul id="mpItems"></ul>
+            <p id="mpEmpty" class="mp-empty hidden">Nenhuma célula cadastrada ainda.</p>
+          </aside>
+
+          <div class="mp-mapbox">
+            <div id="map" role="application" aria-label="Mapa das células"></div>
+            <button id="mpLocate" class="mp-locate" type="button" title="Mostrar minha localização" aria-label="Mostrar minha localização">◎</button>
+
+            <article id="mpDetail" class="mp-detail hidden" aria-live="polite">
+              <button class="mp-detail-close" type="button" aria-label="Fechar detalhes">×</button>
+              <div class="mp-detail-photo" id="mpPhoto"></div>
+              <div class="mp-detail-body">
+                <span class="mp-tag">CÉLULA JOVEM</span>
+                <h2 id="mpName"></h2>
+                <ul class="mp-facts">
+                  <li id="mpScheduleRow"><i>◷</i><span id="mpSchedule"></span></li>
+                  <li id="mpAddressRow"><i>⌖</i><span id="mpAddress"></span></li>
+                </ul>
+                <p id="mpDesc"></p>
+                <div class="mp-actions">
+                  <a id="mpWhats" class="mp-btn whats" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12.04 2a9.9 9.9 0 0 0-8.5 14.9L2 22l5.25-1.38A9.9 9.9 0 1 0 12.04 2Zm0 18.1a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 1 1 6.97 3.85Zm4.5-6.14c-.25-.12-1.46-.72-1.69-.8-.23-.09-.39-.13-.56.12-.17.25-.64.8-.78.96-.14.17-.29.19-.54.06a6.7 6.7 0 0 1-3.32-2.9c-.25-.43.25-.4.72-1.34.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.41-.56-.42h-.47c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.08s.9 2.41 1.02 2.58c.12.17 1.76 2.69 4.27 3.77.6.26 1.07.41 1.43.53.6.19 1.15.16 1.58.1.48-.07 1.46-.6 1.67-1.17.2-.58.2-1.08.14-1.18-.06-.1-.23-.17-.48-.29Z"/></svg>
+                    WhatsApp
+                  </a>
+                  <a id="mpRoute" class="mp-btn route" target="_blank" rel="noopener">➤ Rota</a>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="contato">
+    <div class="container footer-main">
+      <div class="footer-brand">
+        <img src="assets/aj-logo.png" alt="AJ">
+        <div><strong>ALIANÇA</strong><span>JOVEM</span></div>
+        <p>Juntos por um propósito maior.</p>
+      </div>
+      <div class="footer-slogan">ADORAR <i>•</i> SERVIR <i>•</i> VIVER <i>•</i> IMPACTAR</div>
+      <div class="footer-social"><a href="https://www.instagram.com/aliancajovembdc/" target="_blank" rel="noopener">◎</a><a href="index.html#instagram">▶</a><a href="mailto:aliancajovem37@gmail.com">✉</a></div>
+    </div>
+    <div class="footer-bottom">© <span id="year"></span> Aliança Jovem. </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="mapa.js"></script>
+</body>
+</html>

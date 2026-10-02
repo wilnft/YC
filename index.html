@@ -19,6 +19,7 @@
     .post-card.post-video-card:first-child{grid-column:1/-1}
     .post-video-cover{height:auto;aspect-ratio:16/9}
     .post-video-cover iframe{display:block;width:100%;height:100%;border:0}
+    .post-video-link{position:relative;z-index:2;display:inline-block;margin-top:10px;color:var(--green);font-size:11px;font-weight:900}
     .post-expand-trigger{position:absolute;inset:0;z-index:1;width:100%;height:100%;padding:0;border:0;background:transparent;cursor:zoom-in}
     .post-expand-trigger:focus-visible{outline:3px solid var(--green);outline-offset:3px}
     .post-link{position:relative;z-index:2}
@@ -102,6 +103,7 @@
         <a href="#sobre">SOBRE</a>
         <a href="#agenda">AGENDA</a>
         <a href="eventos.html">EVENTOS</a>
+        <a href="mapa-celulas.html">CÉLULAS</a>
         <a href="#instagram">INSTAGRAM</a>
         <a href="#contato">CONTATO</a>
       </nav>
@@ -149,16 +151,6 @@
       </div>
     </section>
 
-    <section class="latest-section image-backdrop-section" id="posts">
-      <div class="container">
-        <div class="section-title-row">
-          <div><span class="section-dash"></span><h2>VÍDEOS RECENTES</h2></div>
-          <a href="#posts">VER TODOS <b>→</b></a>
-        </div>
-        <div id="postGrid" class="post-grid"></div>
-      </div>
-    </section>
-
     <section class="agenda-section" id="agenda">
       <div class="container">
         <div class="section-title-row agenda-heading">
@@ -171,6 +163,16 @@
           <h3>Nenhum próximo evento cadastrado</h3>
           <p>Os próximos eventos aparecerão aqui quando forem publicados.</p>
         </div>
+      </div>
+    </section>
+
+    <section class="latest-section image-backdrop-section" id="posts">
+      <div class="container">
+        <div class="section-title-row">
+          <div><span class="section-dash"></span><h2>VÍDEOS RECENTES</h2></div>
+          <a href="#posts">VER TODOS <b>→</b></a>
+        </div>
+        <div id="postGrid" class="post-grid"></div>
       </div>
     </section>
 

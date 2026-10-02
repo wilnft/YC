@@ -1,6 +1,6 @@
 // Álbum de eventos: carrega de event_albums (Supabase) ou do data.json (fallback).
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-const safe=v=>{const s=String(v||"");if(s.startsWith("assets/"))return s;try{const u=new URL(s,location.href);return["http:","https:"].includes(u.protocol)?u.href:"#"}catch{return"#"}};
+const safe=v=>{const s=String(v||"").trim();if(!s)return"#";if(s.startsWith("assets/"))return s;try{const u=new URL(s,location.href);return["http:","https:"].includes(u.protocol)?u.href:"#"}catch{return"#"}};
 const $=s=>document.querySelector(s);
 let albums=[],filter="Todos",cur=null,idx=0;
 
@@ -70,9 +70,42 @@ function open(id,i=0){
 }
 function close(){$("#evDialog").close()}
 
+
+// ---- Carrossel do topo: fotos em loop (configuradas no painel > Carrossel de eventos) ----
+const CAROUSEL_FALLBACK=["assets/hero-worship-bg.jpg","assets/worship-strip.jpg"];
+async function loadCarouselPhotos(){
+  try{
+    const c=window.AL_JOVEM_CONFIG;
+    if(c?.SUPABASE_URL&&!c.SUPABASE_URL.includes("COLE_AQUI")){
+      const sb=supabase.createClient(c.SUPABASE_URL,c.SUPABASE_ANON_KEY);
+      const{data,error}=await sb.from("site_settings").select("events_carousel").eq("id",1).maybeSingle();
+      if(!error&&Array.isArray(data?.events_carousel)&&data.events_carousel.length)return data.events_carousel;
+    }
+  }catch(e){console.warn(e)}
+  return CAROUSEL_FALLBACK;
+}
+function startCarousel(urls){
+  const list=urls.map(safe).filter(u=>u&&u!=="#");if(!list.length)return;
+  const box=$("#evSlides"),dots=$("#evDots"),prev=document.querySelector(".ev-car-arrow.prev"),next=document.querySelector(".ev-car-arrow.next"),root=$("#evCarousel");
+  box.innerHTML=list.map((u,i)=>`<div class="ev-slide${i?"":" on"}"><img src="${esc(u)}" alt="" ${i?'loading="lazy"':""}></div>`).join("");
+  const slides=[...box.children];let i=0,timer=null;
+  const multi=slides.length>1;
+  dots.innerHTML=multi?slides.map((_,k)=>`<button type="button" aria-label="Foto ${k+1}" class="${k?"":"on"}" data-k="${k}"></button>`).join(""):"";
+  [dots,prev,next].forEach(el=>el.classList.toggle("hidden",!multi));
+  if(!multi)return;
+  const go=n=>{slides[i].classList.remove("on");dots.children[i].classList.remove("on");i=(n+slides.length)%slides.length;slides[i].classList.add("on");dots.children[i].classList.add("on")};
+  const play=()=>{stop();timer=setInterval(()=>go(i+1),5000)},stop=()=>{clearInterval(timer);timer=null};
+  prev.onclick=()=>{go(i-1);play()};next.onclick=()=>{go(i+1);play()};
+  dots.onclick=e=>{const b=e.target.closest("[data-k]");if(b){go(+b.dataset.k);play()}};
+  root.addEventListener("mouseenter",stop);root.addEventListener("mouseleave",play);
+  document.addEventListener("visibilitychange",()=>document.hidden?stop():play());
+  play();
+}
+
 document.addEventListener("DOMContentLoaded",async()=>{
   $("#year").textContent=new Date().getFullYear();
   $("#menuToggle").addEventListener("click",()=>$("#mainNav").classList.toggle("open"));
+  loadCarouselPhotos().then(startCarousel);
   albums=await load();renderFilters();renderGrid();
   $("#evFilters").addEventListener("click",e=>{const b=e.target.closest(".ev-chip");if(b){filter=b.dataset.c;renderFilters();renderGrid()}});
   $("#evGrid").addEventListener("click",e=>{const c=e.target.closest("[data-id]");if(c)open(c.dataset.id,+c.dataset.i||0)});

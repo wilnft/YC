@@ -100,7 +100,7 @@ function renderPosts(items){
     card.innerHTML=`<div class="post-cover${videoId?" post-video-cover":""}">${media}</div>
       <div class="post-content"><span class="post-date">${escapeHtml(item.category||"Post")} · ${escapeHtml(item.date||"")}</span>
       <h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.excerpt||"")}</p>
-      ${item.link&&item.link!=="#"&&!videoId?`<a class="post-link" href="${safeUrl(item.link)}" target="_blank" rel="noopener">Ler publicação →</a>`:""}</div>
+      ${videoId?`<a class="post-video-link" href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener">Abrir no YouTube →</a>`:item.link&&item.link!=="#"?`<a class="post-link" href="${safeUrl(item.link)}" target="_blank" rel="noopener">Ler publicação →</a>`:""}</div>
       ${videoId?"":`<button class="post-expand-trigger" type="button" aria-label="Ampliar post: ${escapeHtml(item.title)}"></button>`}`;
     grid.appendChild(card);
   });

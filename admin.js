@@ -74,7 +74,7 @@ window.deleteRow=async(table,id)=>{if(!confirm("Excluir este item?"))return;cons
 function showPanel(name){
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));document.querySelector("#panel-"+name).classList.add("active");
   document.querySelectorAll(".side-nav button").forEach(b=>b.classList.toggle("active",b.dataset.panel===name));
-  const titles={dashboard:"Visão geral",events:"Agenda",posts:"Vídeos",albums:"Álbum de eventos",instagram:"Instagram",visual:"Visual do site"};$("#pageTitle").textContent=titles[name]||"Painel";
+  const titles={dashboard:"Visão geral",events:"Agenda",posts:"Vídeos",albums:"Álbum de eventos",carousel:"Carrossel de eventos",cells:"Mapa de células",instagram:"Instagram",visual:"Visual do site"};$("#pageTitle").textContent=titles[name]||"Painel";
 }
 function scrollTop(){window.scrollTo({top:0,behavior:"smooth"})}
 function syncRegistrationFields(){const enabled=$("#eventRegistrationEnabled").checked;$("#eventWhatsappField").classList.toggle("hidden",!enabled);$("#eventWhatsappNumber").required=enabled}

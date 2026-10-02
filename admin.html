@@ -4,6 +4,7 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#02114F"><title>Painel | Aliança Jovem</title>
 <link rel="icon" type="image/png" href="assets/aj-logo.png?v=2">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="admin.css">
 </head>
 <body>
@@ -14,6 +15,8 @@
     <button data-panel="dashboard" class="active">▦ Visão geral</button>
     <button data-panel="events">◷ Agenda</button>
     <button data-panel="albums">▤ Eventos (álbum)</button>
+    <button data-panel="carousel">▭ Carrossel de eventos</button>
+    <button data-panel="cells">⌖ Mapa de células</button>
     <button data-panel="posts">▣ Vídeos</button>
     <button data-panel="instagram">◎ Instagram</button>
     <button data-panel="visual">▧ Visual</button>
@@ -66,6 +69,38 @@
     <div class="card table-wrap"><table class="table"><thead><tr><th>Capa</th><th>Evento</th><th>Data</th><th>Status</th><th></th></tr></thead><tbody id="albumsTable"></tbody></table></div>
   </section>
 
+  <section id="panel-carousel" class="panel">
+    <div class="card"><div class="card-head"><div><h2>Carrossel do topo de Eventos</h2><p style="color:var(--muted);font-size:13px">Estas fotos passam em loop no topo da página Eventos. Prefira fotos na horizontal (paisagem). Se nenhuma for enviada, o site usa imagens padrão.</p></div></div>
+      <form id="carouselForm">
+        <label>Adicionar fotos<input id="carFiles" type="file" accept="image/*" multiple><small>Pode escolher várias de uma vez (JPG, PNG, WEBP; até 8 MB cada).</small></label>
+        <div id="carList" class="car-list"></div>
+        <div class="form-actions"><button class="save-btn">Salvar carrossel</button></div>
+      </form>
+    </div>
+  </section>
+
+  <section id="panel-cells" class="panel">
+    <div class="card"><div class="card-head"><h2>Mapa de células jovem</h2><button class="small-btn" id="newCell">+ Nova célula</button></div>
+      <form id="cellForm" class="hidden">
+        <div class="form-grid">
+          <label>Nome da célula<input id="cellName" required placeholder="Célula Vila Nova"></label>
+          <label>Dia e horário<input id="cellSchedule" placeholder="Quintas, 20h"></label>
+          <label class="full">Endereço<div class="geo-row"><input id="cellAddress" placeholder="Rua, número, bairro, cidade"><button type="button" class="small-btn" id="cellSearch">Buscar no mapa</button></div><small>Digite o endereço e clique em <b>Buscar no mapa</b>. Depois, se precisar, clique no mapa ou arraste o pin para ajustar o ponto exato.</small></label>
+          <div class="full"><div id="cellPicker" class="cell-picker"></div></div>
+          <label>Latitude<input id="cellLat" required inputmode="decimal" placeholder="-23.550520"></label>
+          <label>Longitude<input id="cellLng" required inputmode="decimal" placeholder="-46.633308"></label>
+          <label class="full">Descrição<textarea id="cellDesc" placeholder="Quem pode participar, ponto de referência, líderes..."></textarea></label>
+          <label>WhatsApp da célula<input id="cellWhats" type="tel" inputmode="tel" placeholder="5511999999999"><small>Com código do país e DDD. O botão do site abre uma conversa com este número.</small></label>
+          <label>Foto do pin<input id="cellPhotoFile" type="file" accept="image/*"><small>Aparece dentro do pin no mapa e nos detalhes. Opcional.</small></label>
+          <div class="full" id="cellPhotoPrev"></div>
+          <label><input id="cellPublished" type="checkbox" checked style="width:auto;display:inline;margin-right:7px"> Publicar no site</label>
+        </div>
+        <div class="form-actions"><button class="save-btn">Salvar célula</button><button type="button" class="cancel-btn" id="cancelCell">Cancelar</button></div>
+      </form>
+    </div>
+    <div class="card table-wrap"><table class="table"><thead><tr><th>Foto</th><th>Célula</th><th>WhatsApp</th><th>Status</th><th></th></tr></thead><tbody id="cellsTable"></tbody></table></div>
+  </section>
+
   <section id="panel-posts" class="panel">
     <div class="card"><div class="card-head"><h2>Vídeos do YouTube</h2><button class="small-btn" id="newPost">+ Novo vídeo</button></div>
       <form id="postForm" class="hidden">
@@ -110,9 +145,11 @@
   </section>
 </main>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script src="admin.js"></script>
 <script src="admin-albums.js"></script>
+<script src="admin-mapa.js"></script>
 </body>
 </html>
