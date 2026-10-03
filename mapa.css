@@ -74,7 +74,7 @@
   .mp-layout{grid-template-columns:1fr}
   .mp-list{height:auto;max-height:none}
   .mp-list ul{max-height:230px}
-  .mp-mapbox{height:70vh;min-height:460px}
+  .mp-mapbox{width:95%;height:66.5vh;min-height:437px;justify-self:center}
   /* No celular os detalhes sobem de baixo como uma "gaveta" */
   .mp-detail{top:auto;left:8px;right:8px;bottom:8px;width:auto;max-height:78%;animation-name:mpup}
   .mp-detail-photo{height:150px}
