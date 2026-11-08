@@ -10,8 +10,8 @@ async function load(){
   try{
     const c=window.AL_JOVEM_CONFIG;
     if(c?.SUPABASE_URL&&!c.SUPABASE_URL.includes("COLE_AQUI")){
-      const sb=supabase.createClient(c.SUPABASE_URL,c.SUPABASE_ANON_KEY);
-      const{data,error}=await sb.from("cell_locations").select("*").eq("published",true).order("name",{ascending:true});
+      const sb=window.getAlJovemSupabase();
+      const{data,error}=await window.alJovemRetry(()=>sb.from("cell_locations").select("id,name,description,schedule,address,lat,lng,photo,whatsapp_number,published,created_at").eq("published",true).order("name",{ascending:true}).limit(500));
       if(!error)return data||[];
     }
   }catch(e){console.warn(e)}

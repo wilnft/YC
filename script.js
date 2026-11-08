@@ -19,11 +19,7 @@ function configured(){
 }
 async function getSupabase(){
   if(!configured()) return null;
-  if(!window.supabaseClient){
-    const {createClient}=window.supabase;
-    window.supabaseClient=createClient(window.AL_JOVEM_CONFIG.SUPABASE_URL,window.AL_JOVEM_CONFIG.SUPABASE_ANON_KEY);
-  }
-  return window.supabaseClient;
+  return window.getAlJovemSupabase();
 }
 async function getData(){
   let fallback=null;
@@ -31,10 +27,10 @@ async function getData(){
     const sb=await getSupabase();
     if(sb){
       const [events,posts,instagram,settings]=await Promise.all([
-        sb.from("events").select("*").eq("published",true).order("date",{ascending:true}),
-        sb.from("posts").select("*").eq("published",true).order("created_at",{ascending:false}),
-        sb.from("instagram_posts").select("*").eq("published",true).order("created_at",{ascending:false}),
-        sb.from("site_settings").select("*").eq("id",1).maybeSingle()
+        window.alJovemRetry(()=>sb.from("events").select("id,title,date,time,location,price,type,cover_image,registration_enabled,whatsapp_number,published,created_at").eq("published",true).order("date",{ascending:true}).limit(250)),
+        window.alJovemRetry(()=>sb.from("posts").select("id,title,date,category,image,excerpt,link,published,created_at").eq("published",true).order("created_at",{ascending:false}).limit(250)),
+        window.alJovemRetry(()=>sb.from("instagram_posts").select("id,title,url,published,created_at").eq("published",true).order("created_at",{ascending:false}).limit(100)),
+        window.alJovemRetry(()=>sb.from("site_settings").select("hero_image,posts_bg,about_bg,support_bg").eq("id",1).maybeSingle())
       ]);
       if(!events.error&&!posts.error&&!instagram.error){
         return {agenda:events.data||[],posts:posts.data||[],instagram:instagram.data||[],settings:settings?.data||{}};

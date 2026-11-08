@@ -5,7 +5,7 @@ const drawPhotos=()=>{$("#alPhotos").innerHTML=photos.map((u,i)=>`<div><img src=
 const reset=()=>{aid=null;photos=[];$("#albumForm").reset();$("#alPublished").checked=true;drawPhotos();$("#albumForm").classList.add("hidden")};
 async function loadAlbums(){
   if(!sb)return;
-  const{data,error}=await sb.from("event_albums").select("*").order("event_date",{ascending:false});
+  const{data,error}=await window.alJovemRetry(()=>sb.from("event_albums").select("*").order("event_date",{ascending:false}).limit(500));
   if(error){$("#albumsTable").innerHTML=`<tr><td colspan="5">Tabela não encontrada. Execute o arquivo <b>supabase/eventos.sql</b> no SQL Editor do Supabase.</td></tr>`;return}
   rows=data||[];
   $("#albumsTable").innerHTML=rows.length?rows.map(r=>`<tr><td>${r.photos?.[0]?`<img class="thumb" src="${esc(r.photos[0])}" alt="">`:"-"}</td><td><b>${esc(r.title)}</b><br><small>${esc(r.category||"")} · ${(r.photos||[]).length} foto(s) · ${(r.videos||[]).length} vídeo(s)</small></td><td>${esc(dateBR(r.event_date))}</td><td>${r.published?"Publicado":"Rascunho"}</td><td><div class="actions"><button class="small-btn" data-edit="${esc(r.id)}">Editar</button><button class="danger-btn" data-del="${esc(r.id)}">Excluir</button></div></td></tr>`).join(""):`<tr><td colspan="5">Nenhum post cadastrado.</td></tr>`;

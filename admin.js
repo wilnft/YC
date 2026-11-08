@@ -1,6 +1,6 @@
 const cfg=window.AL_JOVEM_CONFIG;
 const configured=cfg&&!cfg.SUPABASE_URL.includes("COLE_AQUI")&&!cfg.SUPABASE_ANON_KEY.includes("COLE_AQUI");
-const sb=configured?supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY):null;
+const sb=configured?window.getAlJovemSupabase():null;
 let editingId=null;
 
 const $=s=>document.querySelector(s);
@@ -17,9 +17,9 @@ async function requireUser(){
 
 async function loadAll(){
   const [e,p,i]=await Promise.all([
-    sb.from("events").select("*").order("date",{ascending:false}),
-    sb.from("posts").select("*").order("created_at",{ascending:false}),
-    sb.from("instagram_posts").select("*").order("created_at",{ascending:false})
+    window.alJovemRetry(()=>sb.from("events").select("*").order("date",{ascending:false}).limit(500)),
+    window.alJovemRetry(()=>sb.from("posts").select("*").order("created_at",{ascending:false}).limit(500)),
+    window.alJovemRetry(()=>sb.from("instagram_posts").select("*").order("created_at",{ascending:false}).limit(500))
   ]);
   if(e.error||p.error||i.error) throw new Error((e.error||p.error||i.error)?.message||"Não foi possível carregar os dados. Confira o SQL/RLS.");
   renderEvents(e.data||[]);renderPosts(p.data||[]);renderInstagram(i.data||[]);
@@ -74,7 +74,7 @@ window.deleteRow=async(table,id)=>{if(!confirm("Excluir este item?"))return;cons
 function showPanel(name){
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));document.querySelector("#panel-"+name).classList.add("active");
   document.querySelectorAll(".side-nav button").forEach(b=>b.classList.toggle("active",b.dataset.panel===name));
-  const titles={dashboard:"Visão geral",events:"Agenda",posts:"Vídeos",albums:"Álbum de eventos",carousel:"Carrossel de eventos",cells:"Mapa de células",instagram:"Instagram",visual:"Visual do site"};$("#pageTitle").textContent=titles[name]||"Painel";
+  const titles={dashboard:"Visão geral",events:"Agenda",posts:"Vídeos",albums:"Álbum de eventos",carousel:"Carrossel de eventos",cells:"Mapa de células",instagram:"Instagram",support:"Ponto de apoio",visual:"Visual do site"};$("#pageTitle").textContent=titles[name]||"Painel";
 }
 function scrollTop(){window.scrollTo({top:0,behavior:"smooth"})}
 function syncRegistrationFields(){const enabled=$("#eventRegistrationEnabled").checked;$("#eventWhatsappField").classList.toggle("hidden",!enabled);$("#eventWhatsappNumber").required=enabled}
@@ -88,19 +88,20 @@ async function save(table,data,formReset){
 }
 
 async function loadVisualSettings(){
-  const {data,error}=await sb.from("site_settings").select("*").eq("id",1).maybeSingle();
+  const {data,error}=await window.alJovemRetry(()=>sb.from("site_settings").select("hero_image,posts_bg,about_bg,support_bg,events_carousel").eq("id",1).maybeSingle());
   if(error) return;
   window.currentVisual=data||{};
-  $("#visualPreview").innerHTML=`<div><b>Principal</b>${data?.hero_image?`<img src="${esc(data.hero_image)}">`:`<span>Não definida</span>`}</div><div><b>Posts</b>${data?.posts_bg?`<img src="${esc(data.posts_bg)}">`:`<span>Não definida</span>`}</div><div><b>Sobre</b>${data?.about_bg?`<img src="${esc(data.about_bg)}">`:`<span>Não definida</span>`}</div>`;
+  $("#visualPreview").innerHTML=`<div><b>Principal</b>${data?.hero_image?`<img src="${esc(data.hero_image)}">`:`<span>Não definida</span>`}</div><div><b>Posts</b>${data?.posts_bg?`<img src="${esc(data.posts_bg)}">`:`<span>Não definida</span>`}</div><div><b>Sobre</b>${data?.about_bg?`<img src="${esc(data.about_bg)}">`:`<span>Não definida</span>`}</div><div><b>Ponto de Apoio</b>${data?.support_bg?`<img src="${esc(data.support_bg)}">`:`<span>Não definida</span>`}</div>`;
 }
 async function saveVisual(){
   const current=window.currentVisual||{};
   const hero=await uploadImage($("#visualHero").files[0],"backgrounds")||current.hero_image||null;
   const posts=await uploadImage($("#visualPosts").files[0],"backgrounds")||current.posts_bg||null;
   const about=await uploadImage($("#visualAbout").files[0],"backgrounds")||current.about_bg||null;
-  const {error}=await sb.from("site_settings").upsert({id:1,hero_image:hero,posts_bg:posts,about_bg:about},{onConflict:"id"});
+  const support=await uploadImage($("#visualSupport").files[0],"backgrounds")||current.support_bg||null;
+  const {error}=await sb.from("site_settings").upsert({id:1,hero_image:hero,posts_bg:posts,about_bg:about,support_bg:support},{onConflict:"id"});
   if(error)throw new Error(error.message);
-  window.currentVisual={id:1,hero_image:hero,posts_bg:posts,about_bg:about};
+  window.currentVisual={id:1,hero_image:hero,posts_bg:posts,about_bg:about,support_bg:support};
   await loadVisualSettings();notice("Imagens do visual atualizadas!");
 }
 
@@ -126,3 +127,17 @@ document.addEventListener("DOMContentLoaded",async()=>{
   $("#visualForm").onsubmit=async e=>{e.preventDefault();try{notice("Enviando imagens...");await saveVisual()}catch(err){notice(err.message,true)}};
   try{await loadAll();await loadVisualSettings()}catch(e){notice(e.message,true)}
 });
+
+
+// PONTO DE APOIO — cards administráveis
+function renderSupport(rows){$("#supportTable").innerHTML=rows.length?rows.map(r=>`<tr><td>${r.photo?`<img class="thumb" src="${esc(r.photo)}" alt="">`:"-"}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.whatsapp)}</td><td>${r.published?"Publicado":"Rascunho"}</td><td><div class="actions"><button class="small-btn" onclick='editSupport(${JSON.stringify(r)})'>Editar</button><button class="danger-btn" onclick="deleteRow('support_points','${r.id}')">Excluir</button></div></td></tr>`).join(""):`<tr><td colspan="5">Nenhum ponto de apoio cadastrado.</td></tr>`}
+window.editSupport=r=>{editingId=r.id;showPanel("support");$("#supportForm").classList.remove("hidden");$("#supportName").value=r.name||"";$("#supportDescription").value=r.description||"";$("#supportWhats").value=r.whatsapp||"";$("#supportPhoto").value=r.photo||"";$("#supportPhotoPreview").innerHTML=r.photo?`<img class="thumb" src="${esc(r.photo)}" alt="Foto atual">`:"";$("#supportPublished").checked=!!r.published;scrollTop()};
+function resetSupport(){editingId=null;$("#supportForm").reset();$("#supportPhoto").value="";$("#supportPhotoPreview").innerHTML="";$("#supportPublished").checked=true;$("#supportForm").classList.add("hidden")}
+document.addEventListener("DOMContentLoaded",async()=>{if(!(await requireUser()))return;
+$("#newSupport").onclick=()=>{editingId=null;$("#supportForm").reset();$("#supportPhoto").value="";$("#supportPhotoPreview").innerHTML="";$("#supportPublished").checked=true;$("#supportForm").classList.remove("hidden")};
+$("#cancelSupport").onclick=resetSupport;
+$("#supportPhotoFile").onchange=()=>{const f=$("#supportPhotoFile").files[0];if(f){const url=URL.createObjectURL(f);$("#supportPhotoPreview").innerHTML=`<img class="thumb" style="width:90px;height:90px;object-fit:cover;border-radius:50%" src="${url}" alt="Prévia">`}};
+$("#supportForm").onsubmit=async e=>{e.preventDefault();try{const name=$("#supportName").value.trim(),description=$("#supportDescription").value.trim(),whatsapp=$("#supportWhats").value.replace(/\\D/g,"");if(whatsapp.length<10||whatsapp.length>15)throw new Error("Informe um WhatsApp válido com país e DDD.");let photo=$("#supportPhoto").value||null;if($("#supportPhotoFile").files[0])photo=await uploadImage($("#supportPhotoFile").files[0],"support");const data={name,description,whatsapp,photo,published:$("#supportPublished").checked};const q=editingId?sb.from("support_points").update(data).eq("id",editingId):sb.from("support_points").insert(data);const{error}=await q;if(error)throw new Error(error.message);notice("Card do ponto de apoio salvo!");resetSupport();await loadSupport()}catch(err){notice(err.message,true)}};
+await loadSupport().catch(err=>notice(err.message,true));
+});
+async function loadSupport(){const{data,error}=await window.alJovemRetry(()=>sb.from("support_points").select("*").order("created_at",{ascending:false}).limit(500));if(error)throw new Error(error.message);renderSupport(data||[])}

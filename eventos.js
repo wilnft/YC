@@ -26,8 +26,8 @@ async function load(){
   try{
     const c=window.AL_JOVEM_CONFIG;
     if(c?.SUPABASE_URL&&!c.SUPABASE_URL.includes("COLE_AQUI")){
-      const sb=supabase.createClient(c.SUPABASE_URL,c.SUPABASE_ANON_KEY);
-      const{data,error}=await sb.from("event_albums").select("*").eq("published",true).order("event_date",{ascending:false});
+      const sb=window.getAlJovemSupabase();
+      const{data,error}=await window.alJovemRetry(()=>sb.from("event_albums").select("id,title,event_date,category,caption,photos,videos,published,created_at").eq("published",true).order("event_date",{ascending:false}).limit(150));
       if(!error)return data||[];
     }
   }catch(e){console.warn(e)}
@@ -77,8 +77,8 @@ async function loadCarouselPhotos(){
   try{
     const c=window.AL_JOVEM_CONFIG;
     if(c?.SUPABASE_URL&&!c.SUPABASE_URL.includes("COLE_AQUI")){
-      const sb=supabase.createClient(c.SUPABASE_URL,c.SUPABASE_ANON_KEY);
-      const{data,error}=await sb.from("site_settings").select("events_carousel").eq("id",1).maybeSingle();
+      const sb=window.getAlJovemSupabase();
+      const{data,error}=await window.alJovemRetry(()=>sb.from("site_settings").select("events_carousel").eq("id",1).maybeSingle());
       if(!error&&Array.isArray(data?.events_carousel)&&data.events_carousel.length)return data.events_carousel;
     }
   }catch(e){console.warn(e)}

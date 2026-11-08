@@ -24,7 +24,7 @@
 <script>
 const cfg=window.AL_JOVEM_CONFIG;
 const ok=cfg&&!cfg.SUPABASE_URL.includes("COLE_AQUI")&&!cfg.SUPABASE_ANON_KEY.includes("COLE_AQUI");
-const sb=ok?supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY):null;
+const sb=ok?window.getAlJovemSupabase():null;
 const form=document.querySelector("#loginForm"),err=document.querySelector("#loginError");
 form.addEventListener("submit",async e=>{
   e.preventDefault();err.textContent="";

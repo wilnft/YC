@@ -17,6 +17,7 @@
     <button data-panel="albums">▤ Eventos (álbum)</button>
     <button data-panel="carousel">▭ Carrossel de eventos</button>
     <button data-panel="cells">⌖ Mapa de células</button>
+    <button data-panel="support">♡ Ponto de apoio</button>
     <button data-panel="posts">▣ Vídeos</button>
     <button data-panel="instagram">◎ Instagram</button>
     <button data-panel="visual">▧ Visual</button>
@@ -101,6 +102,18 @@
     <div class="card table-wrap"><table class="table"><thead><tr><th>Foto</th><th>Célula</th><th>WhatsApp</th><th>Status</th><th></th></tr></thead><tbody id="cellsTable"></tbody></table></div>
   </section>
 
+  <section id="panel-support" class="panel">
+<div class="card"><div class="card-head"><h2>Ponto de apoio</h2><button class="small-btn" id="newSupport">+ Novo card</button></div>
+<form id="supportForm" class="hidden"><div class="form-grid">
+<label>Foto de perfil<input id="supportPhotoFile" type="file" accept="image/*"><small>Foto JPG, PNG, WEBP ou GIF; até 8 MB.</small><input id="supportPhoto" type="hidden"></label>
+<div class="full" id="supportPhotoPreview"></div>
+<label>Nome do card<input id="supportName" required placeholder="Nome da pessoa ou serviço"></label>
+<label>WhatsApp<input id="supportWhats" type="tel" inputmode="tel" required placeholder="5511999999999"><small>Inclua o código do país e DDD. Ex.: 55 + DDD + número.</small></label>
+<label class="full">Descrição<textarea id="supportDescription" required placeholder="Descreva como este ponto de apoio pode ajudar"></textarea></label>
+<label><input id="supportPublished" type="checkbox" checked style="width:auto;display:inline;margin-right:7px"> Publicar no site</label>
+</div><div class="form-actions"><button class="save-btn">Salvar card</button><button type="button" class="cancel-btn" id="cancelSupport">Cancelar</button></div></form></div>
+<div class="card table-wrap"><table class="table"><thead><tr><th>Foto</th><th>Nome</th><th>WhatsApp</th><th>Status</th><th></th></tr></thead><tbody id="supportTable"></tbody></table></div></section>
+
   <section id="panel-posts" class="panel">
     <div class="card"><div class="card-head"><h2>Vídeos do YouTube</h2><button class="small-btn" id="newPost">+ Novo vídeo</button></div>
       <form id="postForm" class="hidden">
@@ -125,6 +138,7 @@
           <label>Imagem principal <input id="visualHero" type="file" accept="image/*"><small>Usada no destaque inicial.</small></label>
           <label>Fundo da área de posts <input id="visualPosts" type="file" accept="image/*"><small>Usada como background atrás dos posts.</small></label>
           <label>Fundo da área Sobre <input id="visualAbout" type="file" accept="image/*"><small>Usada como background da seção Sobre.</small></label>
+          <label>Foto de fundo do Ponto de Apoio <input id="visualSupport" type="file" accept="image/*"><small>Troca a imagem atrás das frases bíblicas na página Ponto de Apoio.</small></label>
         </div>
         <div id="visualPreview" class="visual-preview"></div>
         <div class="form-actions"><button class="save-btn">Salvar imagens</button></div>

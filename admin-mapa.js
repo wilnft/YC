@@ -66,7 +66,7 @@ async function searchAddress(){
   finally{b.disabled=false;b.textContent="Buscar no mapa"}
 }
 async function loadCells(){
-  const{data,error}=await sb.from("cell_locations").select("*").order("created_at",{ascending:false});
+  const{data,error}=await window.alJovemRetry(()=>sb.from("cell_locations").select("*").order("created_at",{ascending:false}).limit(500));
   if(error){$("#cellsTable").innerHTML=`<tr><td colspan="5">Tabela não encontrada. ${SQL_HINT}</td></tr>`;return}
   cellRows=data||[];
   $("#cellsTable").innerHTML=cellRows.length?cellRows.map(r=>`<tr><td>${r.photo?`<img class="thumb" src="${esc(r.photo)}" alt="">`:"-"}</td><td><b>${esc(r.name)}</b><br><small>${esc(r.schedule||"")}${r.schedule&&r.address?" · ":""}${esc(r.address||"")}</small></td><td>${r.whatsapp_number?esc(r.whatsapp_number):"-"}</td><td>${r.published?"Publicado":"Rascunho"}</td><td><div class="actions"><button class="small-btn" data-cedit="${esc(r.id)}">Editar</button><button class="danger-btn" data-cdel="${esc(r.id)}">Excluir</button></div></td></tr>`).join(""):`<tr><td colspan="5">Nenhuma célula cadastrada.</td></tr>`;
@@ -78,7 +78,7 @@ function drawCar(){
   $("#carList").innerHTML=carPhotos.length?carPhotos.map((u,i)=>`<div class="car-item"><img src="${esc(u)}" alt=""><div class="actions"><button type="button" class="small-btn" data-up="${i}" ${i?"":"disabled"} aria-label="Mover para antes">←</button><button type="button" class="small-btn" data-down="${i}" ${i<carPhotos.length-1?"":"disabled"} aria-label="Mover para depois">→</button><button type="button" class="danger-btn" data-rm="${i}">Remover</button></div></div>`).join(""):`<p class="car-empty">Nenhuma foto enviada — o site está usando as imagens padrão.</p>`;
 }
 async function loadCarousel(){
-  const{data,error}=await sb.from("site_settings").select("events_carousel").eq("id",1).maybeSingle();
+  const{data,error}=await window.alJovemRetry(()=>sb.from("site_settings").select("events_carousel").eq("id",1).maybeSingle());
   if(error){$("#carList").innerHTML=`<p class="car-empty">Coluna não encontrada. ${SQL_HINT}</p>`;return}
   carPhotos=Array.isArray(data?.events_carousel)?[...data.events_carousel]:[];drawCar();
 }
