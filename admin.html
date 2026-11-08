@@ -115,12 +115,12 @@
 <div class="card table-wrap"><table class="table"><thead><tr><th>Foto</th><th>Nome</th><th>WhatsApp</th><th>Status</th><th></th></tr></thead><tbody id="supportTable"></tbody></table></div></section>
 
   <section id="panel-posts" class="panel">
-    <div class="card"><div class="card-head"><h2>Vídeos do YouTube</h2><button class="small-btn" id="newPost">+ Novo vídeo</button></div>
+    <div class="card"><div class="card-head"><h2>Vídeos do YouTube e TikTok</h2><button class="small-btn" id="newPost">+ Novo vídeo</button></div>
       <form id="postForm" class="hidden">
         <div class="form-grid">
           <label>Título<input id="postTitle" required></label><label>Data<input id="postDate" placeholder="26/09"></label>
           <label>Categoria<input id="postCategory" placeholder="Louvor, evento, mensagem"></label>
-          <label class="full">URL do vídeo no YouTube<input id="postYoutubeUrl" type="url" placeholder="https://www.youtube.com/watch?v=..."><small>A miniatura e o player serão carregados do próprio vídeo.</small></label>
+          <label class="full">URL do vídeo (YouTube ou TikTok)<input id="postYoutubeUrl" type="url" placeholder="https://www.youtube.com/watch?v=... ou https://www.tiktok.com/@usuario/video/ID"><small>O player incorporado será carregado do YouTube ou TikTok. Para TikTok, use o link completo do vídeo.</small></label>
           <input id="postLegacyLink" type="hidden">
           <label class="full">Resumo<textarea id="postExcerpt"></textarea></label>
           <label><input id="postPublished" type="checkbox" checked style="width:auto;display:inline;margin-right:7px"> Publicar no site</label>

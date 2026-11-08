@@ -32,21 +32,28 @@ function renderPosts(rows){
   $("#postsTable").innerHTML=rows.length?rows.map(r=>`<tr><td>${postMediaThumb(r)}</td><td><b>${esc(r.title)}</b><br><small>${esc(r.category||"")}</small></td><td>${esc(r.date||"-")}</td><td>${r.published?"Publicado":"Rascunho"}</td><td><div class="actions"><button class="small-btn" onclick='editPost(${JSON.stringify(r)})'>Editar</button><button class="danger-btn" onclick="deleteRow('posts','${r.id}')">Excluir</button></div></td></tr>`).join(""):`<tr><td colspan="5">Nenhum vídeo cadastrado.</td></tr>`;
 }
 
-function youtubeVideoId(value){
+function postVideoInfo(value){
   try{
     const url=new URL(value),host=url.hostname.toLowerCase().replace(/^www\./,"");
-    let id="";
-    if(host==="youtu.be")id=url.pathname.split("/").filter(Boolean)[0]||"";
-    else if(["youtube.com","m.youtube.com","music.youtube.com","youtube-nocookie.com"].includes(host)){
-      if(url.pathname==="/watch")id=url.searchParams.get("v")||"";
+    if(host==="youtu.be"||["youtube.com","m.youtube.com","music.youtube.com","youtube-nocookie.com"].includes(host)){
+      let id="";
+      if(host==="youtu.be")id=url.pathname.split("/").filter(Boolean)[0]||"";
+      else if(url.pathname==="/watch")id=url.searchParams.get("v")||"";
       else if(/^\/(embed|shorts|live)\//.test(url.pathname))id=url.pathname.split("/")[2]||"";
+      if(/^[A-Za-z0-9_-]{11}$/.test(id))return{platform:"YouTube",id};
     }
-    return /^[A-Za-z0-9_-]{11}$/.test(id)?id:null;
+    if(host==="tiktok.com"||host==="m.tiktok.com"){
+      const m=url.pathname.match(/^\/@[^/]+\/video\/(\d+)/);
+      if(m)return{platform:"TikTok",id:m[1]};
+    }
+    return null;
   }catch{return null}
 }
+function youtubeVideoId(value){const info=postVideoInfo(value);return info?.platform==="YouTube"?info.id:null}
 function postMediaThumb(row){
-  const id=youtubeVideoId(row.link);
-  if(id)return `<img class="thumb" src="https://img.youtube.com/vi/${id}/hqdefault.jpg" alt="${esc(row.title)}">`;
+  const info=postVideoInfo(row.link);
+  if(info?.platform==="YouTube")return `<img class="thumb" src="https://img.youtube.com/vi/${info.id}/hqdefault.jpg" alt="${esc(row.title)}">`;
+  if(info?.platform==="TikTok")return `<div class="thumb" style="display:grid;place-items:center;background:#111;color:white;font-weight:800">TikTok</div>`;
   return row.image?`<img class="thumb" src="${esc(row.image)}" alt="${esc(row.title)}">`:"-";
 }
 function renderInstagram(rows){
@@ -67,7 +74,7 @@ async function uploadImage(file,folder="posts"){
 }
 
 window.editEvent=r=>{editingId=r.id;showPanel("events");$("#eventForm").classList.remove("hidden");$("#eventTitle").value=r.title||"";$("#eventDate").value=r.date||"";$("#eventTime").value=r.time||"";$("#eventLocation").value=r.location||"";$("#eventPrice").value=r.price||"";$("#eventType").value=r.type||"";$("#eventCover").value=r.cover_image||"";$("#eventRegistrationEnabled").checked=!!r.registration_enabled;$("#eventWhatsappNumber").value=r.whatsapp_number||"";syncRegistrationFields();$("#eventPublished").checked=!!r.published;scrollTop()};
-window.editPost=r=>{editingId=r.id;showPanel("posts");$("#postForm").classList.remove("hidden");$("#postTitle").value=r.title||"";$("#postDate").value=r.date||"";$("#postCategory").value=r.category||"";const videoId=youtubeVideoId(r.link);$("#postYoutubeUrl").value=videoId?r.link:"";$("#postYoutubeUrl").required=!!videoId;$("#postLegacyLink").value=videoId?"":r.link||"";$("#postExcerpt").value=r.excerpt||"";$("#postPublished").checked=!!r.published;scrollTop()};
+window.editPost=r=>{editingId=r.id;showPanel("posts");$("#postForm").classList.remove("hidden");$("#postTitle").value=r.title||"";$("#postDate").value=r.date||"";$("#postCategory").value=r.category||"";const videoInfo=postVideoInfo(r.link);$("#postYoutubeUrl").value=videoInfo?r.link:"";$("#postYoutubeUrl").required=!!videoInfo;$("#postLegacyLink").value=videoInfo?"":r.link||"";$("#postExcerpt").value=r.excerpt||"";$("#postPublished").checked=!!r.published;scrollTop()};
 window.editInstagram=r=>{editingId=r.id;showPanel("instagram");$("#instagramForm").classList.remove("hidden");$("#igTitle").value=r.title||"";$("#igUrl").value=r.url||"";$("#igPublished").checked=!!r.published;scrollTop()};
 window.deleteRow=async(table,id)=>{if(!confirm("Excluir este item?"))return;const{error}=await sb.from(table).delete().eq("id",id);if(error)notice(error.message,true);else{notice("Item excluído.");loadAll()}};
 
@@ -118,7 +125,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
 
   $("#newPost").onclick=()=>{$("#postForm").classList.remove("hidden");editingId=null;$("#postForm").reset();$("#postYoutubeUrl").required=true;$("#postPublished").checked=true};
   $("#cancelPost").onclick=resetPost;
-  $("#postForm").onsubmit=async e=>{e.preventDefault();try{const youtubeUrl=$("#postYoutubeUrl").value.trim();if(youtubeUrl&&!youtubeVideoId(youtubeUrl))throw new Error("Cole um link válido de vídeo do YouTube.");await save("posts",{title:$("#postTitle").value.trim(),date:$("#postDate").value.trim(),category:$("#postCategory").value.trim(),excerpt:$("#postExcerpt").value.trim(),link:youtubeUrl||$("#postLegacyLink").value.trim()||null,published:$("#postPublished").checked},resetPost)}catch(err){notice(err.message,true)}};
+  $("#postForm").onsubmit=async e=>{e.preventDefault();try{const youtubeUrl=$("#postYoutubeUrl").value.trim();if(youtubeUrl&&!postVideoInfo(youtubeUrl))throw new Error("Cole um link válido de vídeo do YouTube ou TikTok (TikTok: https://www.tiktok.com/@usuario/video/ID).");await save("posts",{title:$("#postTitle").value.trim(),date:$("#postDate").value.trim(),category:$("#postCategory").value.trim(),excerpt:$("#postExcerpt").value.trim(),link:youtubeUrl||$("#postLegacyLink").value.trim()||null,published:$("#postPublished").checked},resetPost)}catch(err){notice(err.message,true)}};
 
   $("#newInstagram").onclick=()=>{$("#instagramForm").classList.remove("hidden");editingId=null;$("#instagramForm").reset();$("#igPublished").checked=true};
   $("#cancelInstagram").onclick=resetInstagram;
