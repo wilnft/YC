@@ -4,13 +4,17 @@ const safe=v=>{const s=String(v||"").trim();if(!s)return"#";if(s.startsWith("ass
 const $=s=>document.querySelector(s);
 let albums=[],filter="Todos",cur=null,idx=0;
 
-// Converte uma URL de vídeo em {kind, src, thumb}. Aceita YouTube, Vimeo, Instagram, Facebook e arquivos .mp4/.webm
+// Converte uma URL de vídeo em {kind, src, thumb}. Aceita YouTube, TikTok, Vimeo, Instagram, Facebook e arquivos .mp4/.webm
 function parseVideo(raw){
   try{
     const u=new URL(String(raw).trim()),h=u.hostname.replace(/^www\.|^m\./,""),p=u.pathname.split("/").filter(Boolean);
     let id="";
     if(h==="youtu.be")id=p[0];else if(/^(youtube|music\.youtube|youtube-nocookie)\.com$/.test(h))id=u.pathname==="/watch"?u.searchParams.get("v"):(/^(embed|shorts|live)$/.test(p[0])?p[1]:"");
     if(/^[\w-]{11}$/.test(id||""))return{kind:"iframe",src:`https://www.youtube.com/embed/${id}?rel=0&playsinline=1`,thumb:`https://img.youtube.com/vi/${id}/hqdefault.jpg`};
+    if(h==="tiktok.com"){
+      const videoId=u.pathname.match(/^\/(?:@[^/]+\/video|embed\/v2|player\/v1)\/(\d+)/)?.[1];
+      if(videoId)return{kind:"iframe",src:`https://www.tiktok.com/embed/v2/${videoId}`};
+    }
     if(h==="vimeo.com"&&/^\d+$/.test(p[p.length-1]||""))return{kind:"iframe",src:`https://player.vimeo.com/video/${p[p.length-1]}`};
     if(h==="instagram.com"){const i=p.findIndex(x=>/^(p|reel|tv)$/.test(x));if(i>=0&&p[i+1])return{kind:"iframe",src:`https://www.instagram.com/${p[i]}/${p[i+1]}/embed`}}
     if(/^(facebook\.com|fb\.watch)$/.test(h))return{kind:"iframe",src:`https://www.facebook.com/plugins/video.php?show_text=false&href=${encodeURIComponent(u.href)}`};
