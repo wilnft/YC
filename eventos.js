@@ -4,10 +4,12 @@ const safe=v=>{const s=String(v||"").trim();if(!s)return"#";if(s.startsWith("ass
 const $=s=>document.querySelector(s);
 let albums=[],filter="Todos",cur=null,idx=0;
 
-// Converte uma URL de vídeo em {kind, src, thumb}. Aceita YouTube, TikTok, Vimeo, Instagram, Facebook e arquivos .mp4/.webm
+// Converte uma URL de vídeo em {kind, src, thumb}. Aceita Google Drive, YouTube, TikTok, Vimeo, Instagram, Facebook e arquivos .mp4/.webm
 function parseVideo(raw){
   try{
     const u=new URL(String(raw).trim()),h=u.hostname.replace(/^www\.|^m\./,""),p=u.pathname.split("/").filter(Boolean);
+    const dId=window.YCVideo?.driveId(u.href);
+    if(dId)return{kind:"drive",id:dId,src:YCVideo.embed(dId),thumb:YCVideo.thumb(dId)};
     let id="";
     if(h==="youtu.be")id=p[0];else if(/^(youtube|music\.youtube|youtube-nocookie)\.com$/.test(h))id=u.pathname==="/watch"?u.searchParams.get("v"):(/^(embed|shorts|live)$/.test(p[0])?p[1]:"");
     if(/^[\w-]{11}$/.test(id||""))return{kind:"iframe",src:`https://www.youtube.com/embed/${id}?rel=0&playsinline=1`,thumb:`https://img.youtube.com/vi/${id}/hqdefault.jpg`};
@@ -59,9 +61,9 @@ function renderGrid(){
 function show(i){
   const m=mediaOf(cur);if(!m.length)return;idx=(i+m.length)%m.length;const it=m[idx],st=$("#evStage");
   st.querySelector(".ev-media")?.remove();
-  const el=it.kind==="img"?Object.assign(document.createElement("img"),{src:safe(it.src),alt:cur.title}):it.kind==="file"?Object.assign(document.createElement("video"),{src:safe(it.src),controls:true,playsInline:true}):Object.assign(document.createElement("iframe"),{src:it.src,allowFullscreen:true,title:cur.title});
+  const el=it.kind==="drive"?(st.insertAdjacentHTML("afterbegin",YCVideo.poster(it.id,cur.title)),st.firstElementChild):it.kind==="img"?Object.assign(document.createElement("img"),{src:safe(it.src),alt:cur.title}):it.kind==="file"?Object.assign(document.createElement("video"),{src:safe(it.src),controls:true,playsInline:true}):Object.assign(document.createElement("iframe"),{src:it.src,allowFullscreen:true,title:cur.title});
   if(it.kind==="iframe")el.allow="autoplay; encrypted-media; picture-in-picture; fullscreen";
-  el.className="ev-media";st.prepend(el);
+  if(it.kind!=="drive"){el.className="ev-media";st.prepend(el)}
   document.querySelectorAll(".ev-thumbs button").forEach((b,k)=>b.classList.toggle("on",k===idx));
   document.querySelector(".ev-thumbs .on")?.scrollIntoView({block:"nearest",inline:"center"});
 }

@@ -92,7 +92,7 @@ function renderPosts(items){
   const grid=document.querySelector("#postGrid");grid.innerHTML="";
   (items||[]).forEach(item=>{
     const video=parsePostVideo(item.link),isVideo=!!video,card=document.createElement("article");card.className=isVideo?"post-card post-video-card":"post-card";
-    const media=isVideo?`<iframe src="${video.src}" title="${escapeHtml(item.title)} - ${video.platform}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="origin-when-cross-origin" allowfullscreen></iframe>`:`<img src="${safeUrl(item.image||"assets/evento-1.jpeg")}" alt="${escapeHtml(item.title)}" loading="lazy">`;
+    const media=isVideo&&video.drive?YCVideo.poster(video.drive,item.title):isVideo?`<iframe src="${video.src}" title="${escapeHtml(item.title)} - ${video.platform}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="origin-when-cross-origin" allowfullscreen></iframe>`:`<img src="${safeUrl(item.image||"assets/evento-1.jpeg")}" alt="${escapeHtml(item.title)}" loading="lazy">`;
     card.innerHTML=`<div class="post-cover${isVideo?" post-video-cover":""}">${media}</div>
       <div class="post-content"><span class="post-date">${escapeHtml(item.category||"Post")} · ${escapeHtml(item.date||"")}</span>
       <h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.excerpt||"")}</p>
@@ -115,6 +115,8 @@ function parsePostVideo(value){
       const match=url.pathname.match(/^\/@[^/]+\/video\/(\d+)/);
       if(match)return{platform:"TikTok",src:`https://www.tiktok.com/embed/v2/${match[1]}`};
     }
+    const drive=window.YCVideo?.driveId(value);
+    if(drive)return{platform:"Google Drive",drive};
     return null;
   }catch{return null}
 }

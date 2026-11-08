@@ -62,7 +62,7 @@
           <label class="full">Legenda<textarea id="alCaption" placeholder="Conte como foi o evento"></textarea></label>
           <label class="full">Adicionar fotos<input id="alFiles" type="file" accept="image/*" multiple><small>Pode escolher várias de uma vez (JPG, PNG, WEBP; até 8 MB cada). A primeira será a capa.</small></label>
           <div class="full"><div id="alPhotos" class="visual-preview"></div></div>
-          <label class="full">URLs dos vídeos (uma por linha)<textarea id="alVideos" placeholder="https://www.youtube.com/watch?v=...&#10;https://www.tiktok.com/@usuario/video/..."></textarea><small>Aceita YouTube, TikTok, Vimeo, Instagram, Facebook ou link direto .mp4.</small></label>
+          <label class="full">URLs dos vídeos (uma por linha)<textarea id="alVideos" placeholder="https://drive.google.com/file/d/ID/view?usp=sharing&#10;https://www.youtube.com/watch?v=..."></textarea><small>Aceita Google Drive (compartilhado como “Qualquer pessoa com o link”), YouTube, TikTok, Vimeo, Instagram, Facebook ou link direto .mp4.</small></label>
         </div>
         <div class="form-actions"><button class="save-btn">Salvar post</button><button type="button" class="cancel-btn" id="cancelAlbum">Cancelar</button></div>
       </form>
@@ -115,12 +115,12 @@
 <div class="card table-wrap"><table class="table"><thead><tr><th>Foto</th><th>Nome</th><th>WhatsApp</th><th>Status</th><th></th></tr></thead><tbody id="supportTable"></tbody></table></div></section>
 
   <section id="panel-posts" class="panel">
-    <div class="card"><div class="card-head"><h2>Vídeos do YouTube e TikTok</h2><button class="small-btn" id="newPost">+ Novo vídeo</button></div>
+    <div class="card"><div class="card-head"><h2>Vídeos (Google Drive e YouTube)</h2><button class="small-btn" id="newPost">+ Novo vídeo</button></div>
       <form id="postForm" class="hidden">
         <div class="form-grid">
           <label>Título<input id="postTitle" required></label><label>Data<input id="postDate" placeholder="26/09"></label>
           <label>Categoria<input id="postCategory" placeholder="Louvor, evento, mensagem"></label>
-          <label class="full">URL do vídeo (YouTube ou TikTok)<input id="postYoutubeUrl" type="url" placeholder="https://www.youtube.com/watch?v=... ou https://www.tiktok.com/@usuario/video/ID"><small>O player incorporado será carregado do YouTube ou TikTok. Para TikTok, use o link completo do vídeo.</small></label>
+          <label class="full">Link do vídeo (Google Drive ou YouTube)<input id="postYoutubeUrl" type="url" placeholder="https://drive.google.com/file/d/ID/view?usp=sharing"><small>No Google Drive: botão direito no vídeo → Compartilhar → Acesso geral: “Qualquer pessoa com o link” → Copiar link. Ao tocar no vídeo no site, ele abre em tela cheia.</small></label>
           <input id="postLegacyLink" type="hidden">
           <label class="full">Resumo<textarea id="postExcerpt"></textarea></label>
           <label><input id="postPublished" type="checkbox" checked style="width:auto;display:inline;margin-right:7px"> Publicar no site</label>

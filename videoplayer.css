@@ -1,0 +1,19 @@
+/* Capa clicável do vídeo (Google Drive). Nunca corta: a miniatura usa contain. */
+.yc-vp{position:absolute;inset:0;display:grid;place-items:center;width:100%;height:100%;padding:0;border:0;background:#010733;color:#fff;cursor:pointer;overflow:hidden;font:inherit}
+.yc-vp img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.yc-vp-play{position:relative;display:grid;place-items:center;width:64px;height:64px;padding-left:5px;border-radius:50%;background:rgba(2,12,75,.82);border:2px solid #9CFF16;color:#9CFF16;font-size:26px;transition:transform .2s}
+.yc-vp:hover .yc-vp-play,.yc-vp:focus-visible .yc-vp-play{transform:scale(1.1)}
+.yc-vp:focus-visible{outline:3px solid #9CFF16;outline-offset:-3px}
+.yc-vp-hint{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);padding:4px 12px;border-radius:999px;background:rgba(2,12,75,.85);font-size:11px;font-weight:800;white-space:nowrap}
+
+/* Visualizador em tela cheia */
+.yc-vo{position:fixed;inset:0;width:100vw;max-width:none;height:100vh;height:100dvh;max-height:none;margin:0;padding:0;border:0;background:#000;overflow:hidden}
+.yc-vo::backdrop{background:#000}
+.yc-vo-stage,.yc-vo-stage iframe{display:block;width:100%;height:100%;border:0}
+.yc-vo-close{position:absolute;z-index:3;top:max(10px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));display:grid;place-items:center;width:44px;height:44px;border:1px solid rgba(255,255,255,.55);border-radius:50%;background:rgba(2,12,75,.85);color:#fff;font-size:20px;cursor:pointer}
+html.yc-vo-lock,html.yc-vo-lock body{overflow:hidden}
+
+/* Vídeos nos cards/álbuns */
+.post-video-cover{position:relative}
+.ev-stage>.yc-vp{position:absolute}
+@media(max-width:620px){.yc-vp-play{width:56px;height:56px}}

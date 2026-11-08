@@ -46,6 +46,10 @@ function postVideoInfo(value){
       const m=url.pathname.match(/^\/@[^/]+\/video\/(\d+)/);
       if(m)return{platform:"TikTok",id:m[1]};
     }
+    if(host==="drive.google.com"||host==="docs.google.com"){
+      const m=url.pathname.match(/\/file\/(?:u\/\d+\/)?d\/([\w-]{10,})/)||(/^\/(open|uc)/.test(url.pathname)?[null,url.searchParams.get("id")]:null);
+      if(m&&/^[\w-]{10,}$/.test(m[1]||""))return{platform:"Google Drive",id:m[1]};
+    }
     return null;
   }catch{return null}
 }
@@ -53,6 +57,7 @@ function youtubeVideoId(value){const info=postVideoInfo(value);return info?.plat
 function postMediaThumb(row){
   const info=postVideoInfo(row.link);
   if(info?.platform==="YouTube")return `<img class="thumb" src="https://img.youtube.com/vi/${info.id}/hqdefault.jpg" alt="${esc(row.title)}">`;
+  if(info?.platform==="Google Drive")return `<img class="thumb" src="https://drive.google.com/thumbnail?id=${info.id}&sz=w200" alt="${esc(row.title)}">`;
   if(info?.platform==="TikTok")return `<div class="thumb" style="display:grid;place-items:center;background:#111;color:white;font-weight:800">TikTok</div>`;
   return row.image?`<img class="thumb" src="${esc(row.image)}" alt="${esc(row.title)}">`:"-";
 }
@@ -125,7 +130,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
 
   $("#newPost").onclick=()=>{$("#postForm").classList.remove("hidden");editingId=null;$("#postForm").reset();$("#postYoutubeUrl").required=true;$("#postPublished").checked=true};
   $("#cancelPost").onclick=resetPost;
-  $("#postForm").onsubmit=async e=>{e.preventDefault();try{const youtubeUrl=$("#postYoutubeUrl").value.trim();if(youtubeUrl&&!postVideoInfo(youtubeUrl))throw new Error("Cole um link válido de vídeo do YouTube ou TikTok (TikTok: https://www.tiktok.com/@usuario/video/ID).");await save("posts",{title:$("#postTitle").value.trim(),date:$("#postDate").value.trim(),category:$("#postCategory").value.trim(),excerpt:$("#postExcerpt").value.trim(),link:youtubeUrl||$("#postLegacyLink").value.trim()||null,published:$("#postPublished").checked},resetPost)}catch(err){notice(err.message,true)}};
+  $("#postForm").onsubmit=async e=>{e.preventDefault();try{const youtubeUrl=$("#postYoutubeUrl").value.trim();if(youtubeUrl&&!postVideoInfo(youtubeUrl))throw new Error("Cole um link válido de vídeo do Google Drive (compartilhado como “Qualquer pessoa com o link”) ou do YouTube.");await save("posts",{title:$("#postTitle").value.trim(),date:$("#postDate").value.trim(),category:$("#postCategory").value.trim(),excerpt:$("#postExcerpt").value.trim(),link:youtubeUrl||$("#postLegacyLink").value.trim()||null,published:$("#postPublished").checked},resetPost)}catch(err){notice(err.message,true)}};
 
   $("#newInstagram").onclick=()=>{$("#instagramForm").classList.remove("hidden");editingId=null;$("#instagramForm").reset();$("#igPublished").checked=true};
   $("#cancelInstagram").onclick=resetInstagram;
